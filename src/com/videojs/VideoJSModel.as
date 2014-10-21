@@ -17,7 +17,7 @@ package com.videojs{
     import flash.media.Video;
     import flash.utils.ByteArray;
 	
-	import com.videojs.util.AdContainer;
+	import com.videojs.vpaid.AdContainer;
 
     public class VideoJSModel extends EventDispatcher{
 

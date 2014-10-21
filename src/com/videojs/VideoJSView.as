@@ -14,7 +14,8 @@ package com.videojs{
     import flash.media.Video;
     import flash.net.URLRequest;
     import flash.system.LoaderContext;
-    import com.videojs.util.AdContainer;
+    import com.videojs.vpaid.AdContainer;
+    import com.videojs.vpaid.events.VPAIDEvent;
     
     public class VideoJSView extends Sprite{
         
