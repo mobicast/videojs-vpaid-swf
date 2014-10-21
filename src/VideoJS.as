@@ -5,7 +5,6 @@ package{
     import com.videojs.structs.ExternalEventName;
     import com.videojs.structs.ExternalErrorEventName;
     import com.videojs.Base64;
-
     import flash.display.Sprite;
     import flash.display.StageAlign;
     import flash.display.StageScaleMode;
@@ -48,8 +47,9 @@ package{
             if(ExternalInterface.available){
                 registerExternalMethods();
             }
-            
+
             _app = new VideoJSApp();
+            
             addChild(_app);
 
             _app.model.stageRect = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
@@ -62,7 +62,6 @@ package{
             _ctxMenu.hideBuiltInItems();
             _ctxMenu.customItems.push(_ctxVersion, _ctxAbout);
             this.contextMenu = _ctxMenu;
-
         }
         
         private function registerExternalMethods():void{
@@ -94,11 +93,8 @@ package{
                 }
             }
             finally{}
-            
-            
-            
-            setTimeout(finish, 50);
 
+            setTimeout(finish, 50);
         }
         
         private function finish():void{
@@ -123,24 +119,12 @@ package{
                 _app.model.preload = false;
             }
             
-            if(loaderInfo.parameters.poster != undefined && loaderInfo.parameters.poster != ""){
-                _app.model.poster = String(loaderInfo.parameters.poster);
-            }
-            
             if(loaderInfo.parameters.src != undefined && loaderInfo.parameters.src != ""){
               if (isExternalMSObjectURL(loaderInfo.parameters.src)) {
                 _app.model.srcFromFlashvars = null;
                 openExternalMSObject(loaderInfo.parameters.src);
               } else {
                 _app.model.srcFromFlashvars = String(loaderInfo.parameters.src);
-              }
-            } else{
-              if(loaderInfo.parameters.rtmpConnection != undefined && loaderInfo.parameters.rtmpConnection != ""){
-                _app.model.rtmpConnectionURL = loaderInfo.parameters.rtmpConnection;
-              }
-
-              if(loaderInfo.parameters.rtmpStream != undefined && loaderInfo.parameters.rtmpStream != ""){
-                _app.model.rtmpStream = loaderInfo.parameters.rtmpStream;
               }
             }
             
@@ -271,17 +255,11 @@ package{
                     return _app.model.bytesTotal;
                     break;
                 case "videoWidth":
-                    return _app.model.videoWidth;
+                    return _app.model.width;
                     break;
                 case "videoHeight":
-                    return _app.model.videoHeight;
+                    return _app.model.height;
                     break;
-                case "rtmpConnection":
-                    return _app.model.rtmpConnectionURL;
-                    break;     
-                case "rtmpStream":
-                    return _app.model.rtmpStream;
-                    break;                                       
             }
             return null;
         }
@@ -313,16 +291,17 @@ package{
                     _app.model.preload = _app.model.humanToBoolean(pValue);
                     break;
                 case "poster":
-                    _app.model.poster = String(pValue);
                     break;
                 case "src":
                     // same as when vjs_src() is called directly
                     onSrcCalled(pValue);
                     break;
                 case "currentTime":
+                    if (_app.model.adContainer.hasActiveAdAsset) { return; }
                     _app.model.seekBySeconds(Number(pValue));
                     break;
                 case "currentPercent":
+                    if (_app.model.adContainer.hasActiveAdAsset) { return; }
                     _app.model.seekByPercent(Number(pValue));
                     break;
                 case "muted":
@@ -331,11 +310,17 @@ package{
                 case "volume":
                     _app.model.volume = Number(pValue);
                     break;
-                case "rtmpConnection":
-                    _app.model.rtmpConnectionURL = String(pValue);
+                case "adParameters":
+                    _app.model.adParameters = String(pValue);
                     break;
-                case "rtmpStream":
-                    _app.model.rtmpStream = String(pValue);
+                case "bitrate":
+                    _app.model.bitrate = Number(pValue);
+                    break;
+                case "width":
+                    _app.model.width = Number(pValue);
+                    break;
+                case "height":
+                    _app.model.height = Number(pValue);
                     break;
                 default:
                     _app.model.broadcastErrorEventExternally(ExternalErrorEventName.PROPERTY_NOT_FOUND, pPropertyName);
@@ -370,7 +355,6 @@ package{
             // and provide a reference to this swf for passing data from the soure buffer
             openExternalMSObject(pSrc);
 
-            // ExternalInterface.call('videojs.MediaSource.sourceBufferUrls["' + pSrc + '"]', ExternalInterface.objectID);
           } else {
             _app.model.src = String(pSrc);
           }
@@ -403,6 +387,5 @@ package{
         private function onStageClick(e:MouseEvent):void{
             _app.model.broadcastEventExternally(ExternalEventName.ON_STAGE_CLICK);
         }
-        
     }
 }

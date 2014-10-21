@@ -112,7 +112,8 @@ module.exports = function (grunt) {
       },
       videojs_swf: {
         files: {
-          'dist/video-js.swf': ['src/VideoJS.as']
+          'dist/video-js.swf': ['src/VideoJS.as'],
+          'sandbox/exampleadvpaid2.swf': ['sandbox/exampleAd/ExampleVPAID.as']
         }
       }
     },

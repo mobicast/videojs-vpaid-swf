@@ -25,6 +25,8 @@ package com.videojs.providers{
          */
         function get duration():Number;
 
+        function set duration(pNumber:Number):void;
+
         /**
          * Appends the segment data in a ByteArray to the source buffer.
          * @param  bytes the ByteArray of data to append.
@@ -111,7 +113,7 @@ package com.videojs.providers{
          * Should return a boolean value that indicates whether or not this provider uses the NetStream class.
          */
         function get usesNetStream():Boolean;
-        
+
         /**
          * Should return an object that contains metadata properties, or an empty object if metadata doesn't exist.
          */

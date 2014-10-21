@@ -9,5 +9,6 @@ package com.videojs.structs{
         public static const POSTER_IO_ERROR:String = "posterioerror";
         public static const POSTER_SECURITY_ERROR:String = "postersecurityerror";
         public static const UNSUPPORTED_MODE:String = "unsupportedmode";
+        public static const AD_CREATIVE_VPAID_ERROR:String = "vpaidcreativeerror";
     }
 }

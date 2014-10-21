@@ -2,14 +2,12 @@ package com.videojs{
 
     import com.videojs.events.VideoJSEvent;
     import com.videojs.events.VideoPlaybackEvent;
-    import com.videojs.providers.HTTPAudioProvider;
-    import com.videojs.providers.HTTPVideoProvider;
-    import com.videojs.providers.IProvider;
-    import com.videojs.providers.RTMPVideoProvider;
+    import com.videojs.providers.*;
     import com.videojs.structs.ExternalErrorEventName;
     import com.videojs.structs.ExternalEventName;
     import com.videojs.structs.PlaybackType;
     import com.videojs.structs.PlayerMode;
+    import com.videojs.vpaid.AdContainer;
 
     import flash.events.Event;
     import flash.events.EventDispatcher;
@@ -17,14 +15,12 @@ package com.videojs{
     import flash.geom.Rectangle;
     import flash.media.SoundMixer;
     import flash.media.SoundTransform;
-    import flash.media.Video;
     import flash.utils.ByteArray;
 
     public class VideoJSModel extends EventDispatcher{
 
         private var _masterVolume:SoundTransform;
         private var _currentPlaybackType:String;
-        private var _videoReference:Video;
         private var _lastSetVolume:Number = 1;
         private var _provider:IProvider;
 
@@ -40,9 +36,14 @@ package com.videojs{
         private var _preload:Boolean = true;
         private var _loop:Boolean = false;
         private var _src:String = "";
-        private var _rtmpConnectionURL:String = "";
-        private var _rtmpStream:String = "";
-        private var _poster:String = "";
+        private var _bitrate:Number = 800;
+        private var _width:Number = 0;
+        private var _height:Number = 0;
+        private var _duration:Number = 0;
+
+        // ad support
+        private var _adContainer:AdContainer;
+        private var _adParameters:String = "";
 
         private static var _instance:VideoJSModel;
 
@@ -65,6 +66,14 @@ package com.videojs{
             return _instance;
         }
 
+        public function get adContainer():AdContainer{
+            return _adContainer;
+        }
+
+        public function set adContainer(pContainer: AdContainer):void{
+            _adContainer = pContainer;
+        }
+
         public function get mode():String{
             return _mode;
         }
@@ -72,9 +81,6 @@ package com.videojs{
         public function set mode(pMode:String):void {
             switch(pMode){
                 case PlayerMode.VIDEO:
-                    _mode = pMode;
-                    break;
-                case PlayerMode.AUDIO:
                     _mode = pMode;
                     break;
                 default:
@@ -140,13 +146,6 @@ package com.videojs{
             }
         }
 
-        public function get videoReference():Video{
-            return _videoReference;
-        }
-        public function set videoReference(pVideo:Video):void {
-            _videoReference = pVideo;
-        }
-
         public function get metadata():Object{
             if(_provider){
                 return _provider.metadata;
@@ -171,16 +170,11 @@ package com.videojs{
         }
 
         public function get duration():Number{
-            if(_provider){
-                return _provider.duration;
-            }
-            return 0;
+            return _duration;
         }
 
         public function set duration(value:Number):void {
-            if(_provider && _provider is HTTPVideoProvider) {
-                (_provider as HTTPVideoProvider).duration = value;
-            }
+            _duration = value;
         }
 
         public function get autoplay():Boolean{
@@ -198,8 +192,6 @@ package com.videojs{
         }
         public function set src(pValue:String):void {
             _src = pValue;
-            _rtmpConnectionURL = "";
-            _rtmpStream = "";
             _currentPlaybackType = PlaybackType.HTTP;
             broadcastEventExternally(ExternalEventName.ON_SRC_CHANGE, _src);
             initProvider();
@@ -211,36 +203,29 @@ package com.videojs{
             }
         }
 
-        public function get rtmpConnectionURL():String{
-            return _rtmpConnectionURL;
+        public function get adParameters():String{
+            return _adParameters;
         }
-        public function set rtmpConnectionURL(pURL:String):void {
-            _src = "";
-            _rtmpConnectionURL = pURL;
+        public function set adParameters(pValue:String):void {
+            _adParameters = pValue;
         }
-
-        public function get rtmpStream():String{
-            return _rtmpStream;
+        public function get bitrate():Number{
+            return _bitrate;
         }
-        public function set rtmpStream(pValue:String):void {
-            _src = "";
-            _rtmpStream = pValue;
-            broadcastEventExternally(ExternalEventName.ON_SRC_CHANGE, _src);
-            if (_provider != null && _currentPlaybackType == PlaybackType.RTMP) {
-                var __src:Object = {
-                    connectionURL: _rtmpConnectionURL,
-                    streamURL: _rtmpStream
-                };
-                _provider.src = __src;
-            }
-            else {
-                _currentPlaybackType = PlaybackType.RTMP;
-                initProvider();
-            }
-
-            if(_autoplay){
-                play();
-            }
+        public function set bitrate(pValue:Number):void {
+            _bitrate = pValue;
+        }
+        public function get width():Number{
+            return _width;
+        }
+        public function set width(pValue:Number):void {
+            _width = pValue;
+        }
+        public function get height():Number{
+            return _height;
+        }
+        public function set height(pValue:Number):void {
+            _height = pValue;
         }
 
         /**
@@ -260,15 +245,6 @@ package com.videojs{
             else if(_preload){
                 _provider.load();
             }
-        }
-
-
-        public function get poster():String{
-            return _poster;
-        }
-        public function set poster(pValue:String):void {
-            _poster = pValue;
-            broadcastEvent(new VideoJSEvent(VideoJSEvent.POSTER_SET));
         }
 
         public function get hasEnded():Boolean{
@@ -323,7 +299,6 @@ package com.videojs{
                 return _provider.readyState;
             }
             return 0;
-
         }
 
         public function get preload():Boolean{
@@ -369,34 +344,6 @@ package com.videojs{
                 return _provider.bytesTotal;
             }
             return 0;
-        }
-
-        /**
-         * Returns the pixel width of the currently playing video as interpreted by the decompressor.
-         * @return
-         *
-         */
-        public function get videoWidth():int{
-            if(_videoReference != null){
-                return _videoReference.videoWidth;
-            }
-            else{
-                return 0;
-            }
-        }
-
-        /**
-         * Returns the pixel height of the currently playing video as interpreted by the decompressor.
-         * @return
-         *
-         */
-        public function get videoHeight():int{
-            if(_videoReference != null){
-                return _videoReference.videoHeight;
-            }
-            else{
-                return 0;
-            }
         }
 
         public function get playing():Boolean{
@@ -450,7 +397,7 @@ package com.videojs{
                     var __incomingArgs:* = args as Array;
                     var __newArgs:Array = [_jsErrorEventProxyName, ExternalInterface.objectID].concat(__incomingArgs);
                     var __sanitizedArgs:Array = cleanObject(__newArgs);
-                    ExternalInterface.call.apply(null, __newArgs);
+                    ExternalInterface.call.apply(null, __sanitizedArgs);
                 }
             }
         }
@@ -597,28 +544,12 @@ package com.videojs{
                         __src = {
                             path: _src
                         };
-                        _provider = new HTTPVideoProvider();
-                        _provider.attachVideo(_videoReference);
-                        _provider.init(__src, _autoplay);
-                    }
-                    else if(_currentPlaybackType == PlaybackType.RTMP){
-                        __src = {
-                            connectionURL: _rtmpConnectionURL,
-                            streamURL: _rtmpStream
-                        };
-                        _provider = new RTMPVideoProvider();
-                        _provider.attachVideo(_videoReference);
+                        _provider = new VpaidProvider();
                         _provider.init(__src, _autoplay);
                     }
 
                     break;
-                case PlayerMode.AUDIO:
-                    __src = {
-                        path:_src
-                    };
-                    _provider = new HTTPAudioProvider();
-                    _provider.init(__src, _autoplay);
-                    break;
+
                 default:
                     broadcastEventExternally(ExternalErrorEventName.UNSUPPORTED_MODE);
             }

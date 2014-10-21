@@ -1,0 +1,25 @@
+{
+  "name": "video-js-vpaid",
+  "version": "4.5.1",
+  "homepage": "https://github.com/guardian/video-js-vpaid",
+  "authors": [
+    "Richard Nguyen <richard.nguyen@guardian.co.uk>"
+  ],
+  "main": "dist/video-js.swf",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "video",
+    "actionscript"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
