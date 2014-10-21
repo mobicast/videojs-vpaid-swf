@@ -2,10 +2,7 @@ package com.videojs{
 
     import com.videojs.events.VideoJSEvent;
     import com.videojs.events.VideoPlaybackEvent;
-    import com.videojs.providers.HTTPAudioProvider;
-    import com.videojs.providers.HTTPVideoProvider;
-    import com.videojs.providers.IProvider;
-    import com.videojs.providers.RTMPVideoProvider;
+    import com.videojs.providers.*;
     import com.videojs.structs.ExternalErrorEventName;
     import com.videojs.structs.ExternalEventName;
     import com.videojs.structs.PlaybackType;
@@ -19,6 +16,8 @@ package com.videojs{
     import flash.media.SoundTransform;
     import flash.media.Video;
     import flash.utils.ByteArray;
+	
+	import com.videojs.util.AdContainer;
 
     public class VideoJSModel extends EventDispatcher{
 
@@ -43,6 +42,11 @@ package com.videojs{
         private var _rtmpConnectionURL:String = "";
         private var _rtmpStream:String = "";
         private var _poster:String = "";
+		
+		// ad support
+		var _adView:AdContainer;
+		var _prerollAdMetadata:String = "";
+		var _prerollAdSrc:String = "";
 
         private static var _instance:VideoJSModel;
 
@@ -63,6 +67,14 @@ package com.videojs{
                 _instance = new VideoJSModel(new SingletonLock());
             }
             return _instance;
+        }
+		
+		public function get adView():AdContainer{
+            return _adView;
+        }
+		
+		public function set adView(pContainer: AdContainer):void{
+            _adView = pContainer;
         }
 
         public function get mode():String{
@@ -412,6 +424,14 @@ package com.videojs{
             }
             return false;
         }
+		
+		public function get prerollAdMetadata():String{
+			return _prerollAdSrc;
+		}
+		
+		public function set prerollAdMetadata(pValue:String):void {
+            _prerollAdSrc = pValue;
+        }
 
         /**
          * Allows this model to act as a centralized event bus to which other classes can subscribe.
@@ -597,7 +617,7 @@ package com.videojs{
                         __src = {
                             path: _src
                         };
-                        _provider = new HTTPVideoProvider();
+                        _provider = new VPAIDAwareHTTPVideoProvider();
                         _provider.attachVideo(_videoReference);
                         _provider.init(__src, _autoplay);
                     }

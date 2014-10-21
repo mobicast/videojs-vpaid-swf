@@ -1,7 +1,6 @@
 package com.videojs{
     
-    import com.videojs.events.VideoJSEvent;
-    import com.videojs.events.VideoPlaybackEvent;
+    import com.videojs.events.*;
     import com.videojs.structs.ExternalErrorEventName;
     
     import flash.display.Bitmap;
@@ -15,6 +14,7 @@ package com.videojs{
     import flash.media.Video;
     import flash.net.URLRequest;
     import flash.system.LoaderContext;
+	import com.videojs.util.AdContainer;
     
     public class VideoJSView extends Sprite{
         
@@ -43,10 +43,9 @@ package com.videojs{
             addChild(_uiBackground);
             
             _uiPosterContainer = new Sprite();
-            
-                _uiPosterImage = new Loader();
-                _uiPosterImage.visible = false;
-                _uiPosterContainer.addChild(_uiPosterImage);
+            _uiPosterImage = new Loader();
+            _uiPosterImage.visible = false;
+            _uiPosterContainer.addChild(_uiPosterImage);
             
             addChild(_uiPosterContainer);
             
@@ -55,6 +54,10 @@ package com.videojs{
             _uiVideo.height = _model.stageRect.height;
             _uiVideo.smoothing = true;
             addChild(_uiVideo);
+			
+			_model.adView = new AdContainer(_model);
+			_model.adView.addEventListener(VPAIDEvent.AdLoaded, onAdStart);
+			addChild(_model.adView);
             
             _model.videoReference = _uiVideo;
             
@@ -136,7 +139,7 @@ package com.videojs{
         }
 
         private function sizePoster():void{
-
+			
             // wrap this stuff in a try block to avoid freezing the call stack on an image
             // asset that loaded successfully, but doesn't have an associated crossdomain
             // policy : /
@@ -226,6 +229,10 @@ package com.videojs{
         private function onStreamStart(e:VideoPlaybackEvent):void{
             _uiPosterImage.visible = false;
         }
+		
+		private function onAdStart(e:Object):void {
+			_uiPosterImage.visible = false;
+		}
         
         private function onMetaData(e:VideoPlaybackEvent):void{        
             sizeVideoObject();

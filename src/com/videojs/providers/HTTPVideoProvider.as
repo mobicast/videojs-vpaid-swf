@@ -14,20 +14,22 @@ package com.videojs.providers{
     import flash.utils.ByteArray;
     import flash.utils.Timer;
     import flash.utils.getTimer;
+	
+	import flash.external.ExternalInterface;
 
     public class HTTPVideoProvider extends EventDispatcher implements IProvider{
         
-        private var _nc:NetConnection;
-        private var _ns:NetStream;
-        private var _throughputTimer:Timer;
-        private var _currentThroughput:int = 0; // in B/sec
-        private var _loadStartTimestamp:int;
-        private var _loadStarted:Boolean = false;
-        private var _loadCompleted:Boolean = false;
-        private var _loadErrored:Boolean = false;
-        private var _pauseOnStart:Boolean = false;
-        private var _pausePending:Boolean = false;
-        private var _onmetadadataFired:Boolean = false;
+        protected var _nc:NetConnection;
+        protected var _ns:NetStream;
+        protected var _throughputTimer:Timer;
+        protected var _currentThroughput:int = 0; // in B/sec
+        protected var _loadStartTimestamp:int;
+        protected var _loadStarted:Boolean = false;
+        protected var _loadCompleted:Boolean = false;
+        protected var _loadErrored:Boolean = false;
+        protected var _pauseOnStart:Boolean = false;
+        protected var _pausePending:Boolean = false;
+        protected var _onmetadadataFired:Boolean = false;
 
         /**
          * The number of seconds between the logical start of the stream and the current zero
@@ -38,36 +40,36 @@ package com.videojs.providers{
          *
          * @see http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/net/NetStream.html#play()
          */
-        private var _startOffset:Number = 0;
+        protected var _startOffset:Number = 0;
         /**
          * If true, an empty NetStream buffer should be interpreted as the end of the video. This
          * is probably the case because the video data is being fed to the NetStream dynamically
          * through appendBuffer, not for traditional file download video.
          */
-        private var _ending:Boolean = false;
-        private var _videoReference:Video;
+        protected var _ending:Boolean = false;
+        protected var _videoReference:Video;
         
         /**
          * When the player is paused, and a seek is executed, the NetStream.time property will NOT update until the decoder encounters a new time tag,
          * which won't happen until playback is resumed. This wrecks havoc with external scrubber logic, so when the player is paused and a seek is requested,
          * we cache the intended time, and use it IN PLACE OF NetStream's time when the time accessor is hit. 
          */        
-        private var _pausedSeekValue:Number = -1;
+        protected var _pausedSeekValue:Number = -1;
 
-        private var _src:Object;
-        private var _metadata:Object;
-        private var _isPlaying:Boolean = false;
-        private var _isPaused:Boolean = true;
-        private var _isBuffering:Boolean = false;
-        private var _isSeeking:Boolean = false;
-        private var _isLive:Boolean = false;
-        private var _canSeekAhead:Boolean = false;
-        private var _hasEnded:Boolean = false;
-        private var _canPlayThrough:Boolean = false;
-        private var _loop:Boolean = false;
-        private var _durationOverride:Number;
+        protected var _src:Object;
+        protected var _metadata:Object;
+        protected var _isPlaying:Boolean = false;
+        protected var _isPaused:Boolean = true;
+        protected var _isBuffering:Boolean = false;
+        protected var _isSeeking:Boolean = false;
+        protected var _isLive:Boolean = false;
+        protected var _canSeekAhead:Boolean = false;
+        protected var _hasEnded:Boolean = false;
+        protected var _canPlayThrough:Boolean = false;
+        protected var _loop:Boolean = false;
+        protected var _durationOverride:Number;
         
-        private var _model:VideoJSModel;
+        protected var _model:VideoJSModel;
         
         public function HTTPVideoProvider(){
             _model = VideoJSModel.getInstance();
@@ -410,7 +412,7 @@ package com.videojs.providers{
             }
         }
         
-        private function initNetConnection():void{
+        protected function initNetConnection():void{
             // the video element triggers loadstart as soon as the resource selection algorithm selects a source
             // this is somewhat later than that moment but relatively close
             _loadStarted = true;
