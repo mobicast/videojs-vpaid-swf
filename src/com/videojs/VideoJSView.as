@@ -14,13 +14,13 @@ package com.videojs{
     import flash.media.Video;
     import flash.net.URLRequest;
     import flash.system.LoaderContext;
-	import com.videojs.util.AdContainer;
+    import com.videojs.util.AdContainer;
     
     public class VideoJSView extends Sprite{
         
         private var _uiVideo:Video;
         private var _uiPosterContainer:Sprite;
-            private var _uiPosterImage:Loader;
+        private var _uiPosterImage:Loader;
         private var _uiBackground:Sprite;
         
         private var _model:VideoJSModel;
@@ -54,10 +54,10 @@ package com.videojs{
             _uiVideo.height = _model.stageRect.height;
             _uiVideo.smoothing = true;
             addChild(_uiVideo);
-			
-			_model.adView = new AdContainer(_model);
-			_model.adView.addEventListener(VPAIDEvent.AdLoaded, onAdStart);
-			addChild(_model.adView);
+
+            _model.adView = new AdContainer(_model);
+            _model.adView.addEventListener(VPAIDEvent.AdLoaded, onAdStart);
+            addChild(_model.adView);
             
             _model.videoReference = _uiVideo;
             
@@ -139,7 +139,7 @@ package com.videojs{
         }
 
         private function sizePoster():void{
-			
+
             // wrap this stuff in a try block to avoid freezing the call stack on an image
             // asset that loaded successfully, but doesn't have an associated crossdomain
             // policy : /
@@ -229,10 +229,10 @@ package com.videojs{
         private function onStreamStart(e:VideoPlaybackEvent):void{
             _uiPosterImage.visible = false;
         }
-		
-		private function onAdStart(e:Object):void {
-			_uiPosterImage.visible = false;
-		}
+
+        private function onAdStart(e:Object):void {
+            _uiPosterImage.visible = false;
+        }
         
         private function onMetaData(e:VideoPlaybackEvent):void{        
             sizeVideoObject();
