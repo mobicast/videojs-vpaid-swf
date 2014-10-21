@@ -16,8 +16,8 @@ package com.videojs{
     import flash.media.SoundTransform;
     import flash.media.Video;
     import flash.utils.ByteArray;
-	
-	import com.videojs.vpaid.AdContainer;
+
+    import com.videojs.vpaid.AdContainer;
 
     public class VideoJSModel extends EventDispatcher{
 
@@ -42,11 +42,11 @@ package com.videojs{
         private var _rtmpConnectionURL:String = "";
         private var _rtmpStream:String = "";
         private var _poster:String = "";
-		
-		// ad support
-		var _adView:AdContainer;
-		var _prerollAdMetadata:String = "";
-		var _prerollAdSrc:String = "";
+        
+        // ad support
+        var _adView:AdContainer;
+        var _prerollAdMetadata:String = "";
+        var _prerollAdSrc:String = "";
 
         private static var _instance:VideoJSModel;
 
@@ -68,12 +68,12 @@ package com.videojs{
             }
             return _instance;
         }
-		
-		public function get adView():AdContainer{
+        
+        public function get adView():AdContainer{
             return _adView;
         }
-		
-		public function set adView(pContainer: AdContainer):void{
+        
+        public function set adView(pContainer: AdContainer):void{
             _adView = pContainer;
         }
 
@@ -424,12 +424,12 @@ package com.videojs{
             }
             return false;
         }
-		
-		public function get prerollAdMetadata():String{
-			return _prerollAdSrc;
-		}
-		
-		public function set prerollAdMetadata(pValue:String):void {
+        
+        public function get prerollAdMetadata():String{
+            return _prerollAdSrc;
+        }
+        
+        public function set prerollAdMetadata(pValue:String):void {
             _prerollAdSrc = pValue;
         }
 

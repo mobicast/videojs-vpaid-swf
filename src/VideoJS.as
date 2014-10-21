@@ -48,9 +48,9 @@ package{
             if(ExternalInterface.available){
                 registerExternalMethods();
             }
-			
+            
             _app = new VideoJSApp();
-			
+            
             addChild(_app);
 
             _app.model.stageRect = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
@@ -63,8 +63,8 @@ package{
             _ctxMenu.hideBuiltInItems();
             _ctxMenu.customItems.push(_ctxVersion, _ctxAbout);
             this.contextMenu = _ctxMenu;
-			
-			_app.init();
+            
+            _app.init();
 
         }
         
@@ -157,12 +157,12 @@ package{
                     }
                 }
             }
-			
-			if (loaderInfo.parameters.adMetadataSource != undefined) {
-				_app.model.prerollAdMetadata = loaderInfo.parameters.adMetadataSource;
-			}
-			
-			_app.model.broadcastEvent(new VideoJSEvent(VideoJSEvent.INIT_DONE, {}));
+            
+            if (loaderInfo.parameters.adMetadataSource != undefined) {
+                _app.model.prerollAdMetadata = loaderInfo.parameters.adMetadataSource;
+            }
+            
+            _app.model.broadcastEvent(new VideoJSEvent(VideoJSEvent.INIT_DONE, {}));
         }
         
         private function onAddedToStage(e:Event):void{
