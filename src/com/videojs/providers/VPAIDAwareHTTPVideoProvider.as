@@ -12,20 +12,19 @@ package com.videojs.providers{
         public function VPAIDAwareHTTPVideoProvider(): void {
             super();
             
-            _model.adView.addEventListener(VPAIDEvent.AdStopped, function() {
+            _model.adView.addEventListener(VPAIDEvent.AdStopped, function():void {
+                stop();
                 play();
             })
         }
         
-        public override function play():void{
-            // if this is a fresh playback request
+        public override function play():void {
             if(!_loadStarted){
                 if (_model.adView.hasPendingAdAsset) {
-                    _model.adView.loadAdAsset();
-                } else {
-                    super.play();
+                    return _model.adView.loadAdAsset();
                 }
             }
+            super.play();
         }
     }
 }
