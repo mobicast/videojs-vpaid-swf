@@ -12,24 +12,38 @@ package com.videojs.vpaid {
     import com.videojs.vpaid.events.VPAIDEvent;
     import com.videojs.structs.ExternalEventName;
 
+    import flash.external.ExternalInterface;
+
     public class AdContainer extends Sprite {
         
         private var _uiView: VideoJSView;
         private var _model: VideoJSModel;
         private var _creativeContent: Array;
         private var _vpaidAd: *;
+        private var _adIsPlaying: Boolean = false;
         
         public function AdContainer(model: VideoJSModel){
             _model = model;
         }
         
-        public function init(adAssets: Array):void {
+        public function init(adAssets: Array): void {
             _creativeContent = adAssets;
+        }
+
+        public function pausePlayingAd(): void {
+            _adIsPlaying = false;
+            _vpaidAd.pauseAd();
+        }
+
+        public function resumePlayingAd(): void {
+            _adIsPlaying = true;
+            _vpaidAd.resumeAd();
         }
         
         public function adStarted(): void {
+            _adIsPlaying = true;
             dispatchEvent(new VPAIDEvent(VPAIDEvent.AdStarted));
-            _model.broadcastEventExternally(ExternalEventName.ON_RESUME);
+            _model.broadcastEventExternally(VPAIDEvent.AdPluginEventStart);
         }
         
         public function adLoaded(): void {
@@ -45,11 +59,21 @@ package com.videojs.vpaid {
         }
         
         public function adStopped(): void {
+            _adIsPlaying = false;
+            _vpaidAd = null;
             dispatchEvent(new VPAIDEvent(VPAIDEvent.AdStopped));
         }
         
         public function get hasPendingAdAsset(): Boolean {
             return _creativeContent.length > 0;
+        }
+
+        public function get hasActiveAdAsset(): Boolean {
+            return _vpaidAd != null;
+        }
+
+        public function get hasPlayingAdAsset(): Boolean {
+            return _adIsPlaying;
         }
         
         public function loadAdAsset(): void {

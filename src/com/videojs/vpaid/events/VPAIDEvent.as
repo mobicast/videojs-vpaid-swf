@@ -19,5 +19,7 @@ package com.videojs.vpaid.events {
         public static const AdStopped:String = "AdStopped";
         public static const AdError:String = "AdError";
         public static const AdVideoComplete:String = "AdVideoComplete";
+
+        public static const AdPluginEventStart:String = "adstart";
     }
 }
