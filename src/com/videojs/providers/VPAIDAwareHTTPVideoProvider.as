@@ -13,17 +13,15 @@ package com.videojs.providers{
             super();
             
             _model.adView.addEventListener(VPAIDEvent.AdStopped, function():void {
-                stop();
                 play();
             })
         }
         
         public override function play():void {
-            if(!_loadStarted){
-                if (_model.adView.hasPendingAdAsset) {
-                    return _model.adView.loadAdAsset();
-                }
+            if (_model.adView.hasPendingAdAsset) {
+                return _model.adView.loadAdAsset();
             }
+            
             super.play();
         }
     }

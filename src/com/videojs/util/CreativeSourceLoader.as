@@ -3,10 +3,10 @@ package com.videojs.util {
     import flash.net.URLLoader;
     import flash.net.URLRequest;
     import flash.external.ExternalInterface;
+    import flash.utils.getQualifiedClassName;
 
     public class CreativeSourceLoader {
         protected var _callback:Function;
-        protected var adSource: String = "";
 
         public function CreativeSourceLoader(source: String, callback: Function) {
             _callback = callback;
@@ -31,17 +31,26 @@ package com.videojs.util {
             if (creativeData != null) {
                 try {
                     xmlData = new XML(creativeData);
-                    adSource = xmlData.descendants().(name() == "MediaFile").text()
+                    var creativeMedia: XMLList = xmlData.descendants().(name() == "MediaFiles");
+
+                    var adSource: Array = [];
+
+                    for each(var file:XML in creativeMedia.children()) {
+                        adSource.push({
+                            path: file.text().toString(),
+                            height: file.@height,
+                            width: file.@width,
+                            type: file.@type
+                        })
+                    }
+
+                    _callback.call(null, adSource);
                 } catch(e:Error) {
                     //ExternalInterface.call("console.log", e.message)
                 }
             } else {
                 //ExternalInterface.call("console.log", "nothing to load")
             }
-            
-            _callback.call(null, {
-                path: adSource
-            });
         }
     }
 }

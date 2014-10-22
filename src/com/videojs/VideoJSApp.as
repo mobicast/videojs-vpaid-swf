@@ -24,8 +24,8 @@ package com.videojs {
         }
             
         
-        private function postAdRequestInit(pSrc:Object): void {
-            _model.adView.init(pSrc.path);
+        private function postAdRequestInit(pSrc:Array): void {
+            _model.adView.init(pSrc);
         }
         
         public function get model():VideoJSModel{

@@ -14,17 +14,17 @@ package com.videojs.vpaid {
 
     public class AdContainer extends Sprite {
         
-        private var _uiView:VideoJSView;
-        private var _model:VideoJSModel;
-        private var _creativePath:String;
-        private var _creativeData:*;
+        private var _uiView: VideoJSView;
+        private var _model: VideoJSModel;
+        private var _creativeContent: Array;
+        private var _vpaidAd: *;
         
         public function AdContainer(model: VideoJSModel){
             _model = model;
         }
         
-        public function init(path: String):void {
-            _creativePath = path;
+        public function init(adAssets: Array):void {
+            _creativeContent = adAssets;
         }
         
         public function adStarted(): void {
@@ -33,13 +33,14 @@ package com.videojs.vpaid {
         }
         
         public function adLoaded(): void {
-            addChild(_creativeData);
-            _creativeData.startAd();
+            addChild(_vpaidAd);
+            _vpaidAd.resizeAd(stage.width, stage.height, "normal");
+            _vpaidAd.startAd();
             adStarted();
         }
         
         private function adError(): void {
-            _creativeData.stopAd();
+            _vpaidAd.stopAd();
             dispatchEvent(new VPAIDEvent(VPAIDEvent.AdStopped));
         }
         
@@ -47,48 +48,51 @@ package com.videojs.vpaid {
             dispatchEvent(new VPAIDEvent(VPAIDEvent.AdStopped));
         }
         
-        public function get hasPendingAdAsset():Boolean {
-            return _creativePath.length > 0 && !_creativeData;
+        public function get hasPendingAdAsset(): Boolean {
+            return _creativeContent.length > 0;
         }
         
-        public function loadAdAsset():void {
-            if (_creativePath) {
-                loadCreative(_creativePath);
+        public function loadAdAsset(): void {
+            if (_creativeContent.length) {
+                var asset: Object = _creativeContent.shift();
+                loadCreative(asset);
             }
         }
         
-        private function loadCreative(path: String):void {
+        private function loadCreative(asset: Object): void {
             var loader:Loader = new Loader();
             var loaderContext:LoaderContext = new LoaderContext();
-            loader.contentLoaderInfo.addEventListener(Event.COMPLETE, succesfullCreativeLoad );
+            loader.contentLoaderInfo.addEventListener(Event.COMPLETE, function(evt:Object): void {
+                succesfullCreativeLoad(evt, asset);
+            });
             loader.contentLoaderInfo.addEventListener(SecurityErrorEvent.SECURITY_ERROR, 
-                function(evt:SecurityErrorEvent):void {
+                function(evt:SecurityErrorEvent): void {
                     //throwAdError('initError: Security error '+evt.text);
                 });
             loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, 
-                function(evt:IOErrorEvent):void {
+                function(evt:IOErrorEvent): void {
                     //throwAdError('initError: Error loading '+evt.text);
                 });
-            loader.load(new URLRequest(path), loaderContext);
+            loader.load(new URLRequest(asset.path), loaderContext);
         }
         
-        private function succesfullCreativeLoad(evt:Object):void {
-            _creativeData = evt.target.content;
+        private function succesfullCreativeLoad(evt: Object, asset: Object): void {
+            _vpaidAd = evt.target.content.getVPAID();
             
-            _creativeData.addEventListener(VPAIDEvent.AdLoaded, function() {
+            _vpaidAd.addEventListener(VPAIDEvent.AdLoaded, function() {
                 adLoaded();
             });
             
-            _creativeData.addEventListener(VPAIDEvent.AdStopped, function() {
+            _vpaidAd.addEventListener(VPAIDEvent.AdStopped, function() {
                 adStopped();
             });
             
-            _creativeData.addEventListener(VPAIDEvent.AdError, function() {
+            _vpaidAd.addEventListener(VPAIDEvent.AdError, function() {
                 adError();
             });
-            
-            //TODO: get rid of hardcoded values
-            _creativeData.initAd(600, 350, "normal", 800,  "foobar", "param1, param2");
+
+            //TODO: get rid of hardcoded bitrate
+            _vpaidAd.initAd(asset.width, asset.height, "normal", 800, "", "");
         }
     }
 }
