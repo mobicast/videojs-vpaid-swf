@@ -29,6 +29,26 @@ package com.videojs.vpaid {
         public function AdContainer(model: VideoJSModel){
             _model = model;
         }
+
+        public function get hasPendingAdAsset(): Boolean {
+            return _creativeContent.length > 0;
+        }
+
+        public function get hasActiveAdAsset(): Boolean {
+            return _vpaidAd != null;
+        }
+
+        public function get hasPlayingAdAsset(): Boolean {
+            return _adIsPlaying;
+        }
+
+        public function get duration(): Number {
+            return _adDuration;
+        }
+
+        public function get remainingTime(): Number {
+            return _durationTimer.currentCount;
+        }
         
         public function init(adAssets: Array): void {
             _creativeContent = adAssets;
@@ -44,11 +64,13 @@ package com.videojs.vpaid {
 
         public function pausePlayingAd(): void {
             _adIsPlaying = false;
+            _durationTimer.stop();
             _vpaidAd.pauseAd();
         }
 
         public function resumePlayingAd(): void {
             _adIsPlaying = true;
+            _durationTimer.start();
             _vpaidAd.resumeAd();
         }
         
@@ -81,18 +103,6 @@ package com.videojs.vpaid {
             dispatchEvent(new VPAIDEvent(VPAIDEvent.AdStopped));
         }
         
-        public function get hasPendingAdAsset(): Boolean {
-            return _creativeContent.length > 0;
-        }
-
-        public function get hasActiveAdAsset(): Boolean {
-            return _vpaidAd != null;
-        }
-
-        public function get hasPlayingAdAsset(): Boolean {
-            return _adIsPlaying;
-        }
-        
         public function loadAdAsset(): void {
             if (_creativeContent.length) {
                 var asset: Object = _creativeContent.shift();
@@ -121,15 +131,15 @@ package com.videojs.vpaid {
             _vpaidAd = evt.target.content.getVPAID();
             _adDuration = asset.duration;
             
-            _vpaidAd.addEventListener(VPAIDEvent.AdLoaded, function() {
+            _vpaidAd.addEventListener(VPAIDEvent.AdLoaded, function():void {
                 adLoaded();
             });
             
-            _vpaidAd.addEventListener(VPAIDEvent.AdStopped, function() {
+            _vpaidAd.addEventListener(VPAIDEvent.AdStopped, function():void {
                 adStopped();
             });
             
-            _vpaidAd.addEventListener(VPAIDEvent.AdError, function() {
+            _vpaidAd.addEventListener(VPAIDEvent.AdError, function():void {
                 adError();
             });
 
@@ -138,7 +148,7 @@ package com.videojs.vpaid {
         }
 
         private function adDurationTick(evt: Object): void {
-           _model.broadcastEventExternally(VPAIDEvent.AdPluginEventTimeRemaining, _vpaidAd.adRemainingTime); 
+           _model.broadcastEventExternally(VPAIDEvent.AdPluginEventTimeRemaining); 
         }
 
         private function adDurationComplete(evt: Object): void {

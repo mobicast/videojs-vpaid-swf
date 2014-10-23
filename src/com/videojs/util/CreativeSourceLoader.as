@@ -50,7 +50,7 @@ package com.videojs.util {
                         var creativeMedia: XMLList = creative.descendants().(name() == "MediaFiles");
 
                         var duration: Number = 0;
-                        for (var dur in rawDuration) duration += rawDuration[dur];
+                        for (var dur:String in rawDuration) duration += rawDuration[dur];
 
                         for each(var file:XML in creativeMedia.children()) {
                             adSource.push({

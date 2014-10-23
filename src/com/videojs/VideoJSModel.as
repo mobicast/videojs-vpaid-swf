@@ -184,6 +184,11 @@ package com.videojs{
 
         public function get duration():Number{
             if(_provider){
+
+                if (adView.hasActiveAdAsset) {
+                    return adView.duration;
+                }
+
                 return _provider.duration;
             }
             return 0;
@@ -296,6 +301,11 @@ package com.videojs{
          *
          */
         public function get time():Number{
+            
+            if (adView.hasActiveAdAsset) {
+                return adView.remainingTime;
+            }
+
             if(_provider){
                 return _provider.time;
             }
@@ -470,7 +480,7 @@ package com.videojs{
                     var __incomingArgs:* = args as Array;
                     var __newArgs:Array = [_jsErrorEventProxyName, ExternalInterface.objectID].concat(__incomingArgs);
                     var __sanitizedArgs:Array = cleanObject(__newArgs);
-                    ExternalInterface.call.apply(null, __newArgs);
+                    ExternalInterface.call.apply(null, __sanitizedArgs);
                 }
             }
         }
