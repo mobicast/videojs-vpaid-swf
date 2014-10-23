@@ -31,17 +31,37 @@ package com.videojs.util {
             if (creativeData != null) {
                 try {
                     xmlData = new XML(creativeData);
-                    var creativeMedia: XMLList = xmlData.descendants().(name() == "MediaFiles");
+                    var creatives: XMLList = xmlData.descendants().(name() == "Creatives");
 
                     var adSource: Array = [];
+                    for each (var creative: XML in creatives.Creative) {
+                        if (!creative..MediaFiles.length()) {
+                            continue;
+                        }
 
-                    for each(var file:XML in creativeMedia.children()) {
-                        adSource.push({
-                            path: file.text().toString(),
-                            height: file.@height,
-                            width: file.@width,
-                            type: file.@type
-                        })
+                        var rawDuration: Array = creative.descendants().(name() == "Duration").text()
+                            .split(":")
+                            .map(function(s:*, idx:int, arr:Array): Number {
+                                if (idx == 0) return parseInt(s, 10) * 3600;
+                                if (idx == 1) return parseInt(s, 10) * 60;
+                                return parseInt(s, 10);
+                            })
+
+                        var creativeMedia: XMLList = creative.descendants().(name() == "MediaFiles");
+
+                        var duration: Number = 0;
+                        for (var dur in rawDuration) duration += rawDuration[dur];
+
+                        for each(var file:XML in creativeMedia.children()) {
+                            adSource.push({
+                                path: file.text().toString(),
+                                height: file.@height,
+                                width: file.@width,
+                                type: file.@type,
+                                duration: duration,
+                                creativeSource: creative.toXMLString()
+                            })
+                        }
                     }
 
                     _callback.call(null, adSource);

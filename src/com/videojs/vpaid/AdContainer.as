@@ -3,6 +3,7 @@ package com.videojs.vpaid {
     import com.videojs.*;
     import flash.display.Loader;
     import flash.display.Sprite;
+    import flash.utils.Timer;
     import flash.events.*;
     import flash.media.Video;
     import flash.net.NetConnection;
@@ -21,6 +22,9 @@ package com.videojs.vpaid {
         private var _creativeContent: Array;
         private var _vpaidAd: *;
         private var _adIsPlaying: Boolean = false;
+
+        private var _durationTimer: Timer;
+        private var _adDuration: Number;
         
         public function AdContainer(model: VideoJSModel){
             _model = model;
@@ -29,6 +33,14 @@ package com.videojs.vpaid {
         public function init(adAssets: Array): void {
             _creativeContent = adAssets;
         }
+
+        protected function startDurationTimer(): void {
+            _durationTimer = new Timer(1000, _adDuration);
+            _durationTimer.addEventListener(TimerEvent.TIMER, adDurationTick);
+            _durationTimer.addEventListener(TimerEvent.TIMER_COMPLETE, adDurationComplete);
+            _durationTimer.start();
+        }
+
 
         public function pausePlayingAd(): void {
             _adIsPlaying = false;
@@ -42,8 +54,13 @@ package com.videojs.vpaid {
         
         public function adStarted(): void {
             _adIsPlaying = true;
+            startDurationTimer();
             dispatchEvent(new VPAIDEvent(VPAIDEvent.AdStarted));
             _model.broadcastEventExternally(VPAIDEvent.AdPluginEventStart);
+
+            dispatchEvent(new VPAIDEvent(VPAIDEvent.AdImpression));
+            _model.broadcastEventExternally(VPAIDEvent.AdPluginEventImpression);
+
         }
         
         public function adLoaded(): void {
@@ -102,6 +119,8 @@ package com.videojs.vpaid {
         
         private function succesfullCreativeLoad(evt: Object, asset: Object): void {
             _vpaidAd = evt.target.content.getVPAID();
+            _adDuration = asset.duration;
+            ExternalInterface.call("console.log", _adDuration);
             
             _vpaidAd.addEventListener(VPAIDEvent.AdLoaded, function() {
                 adLoaded();
@@ -117,6 +136,20 @@ package com.videojs.vpaid {
 
             //TODO: get rid of hardcoded bitrate
             _vpaidAd.initAd(asset.width, asset.height, "normal", 800, "", "");
+        }
+
+        private function adDurationTick(evt: Object): void {
+           _model.broadcastEventExternally(VPAIDEvent.AdPluginEventTimeRemaining, _vpaidAd.adRemainingTime); 
+        }
+
+        private function adDurationComplete(evt: Object): void {
+           if (_durationTimer) {
+                _durationTimer.removeEventListener(TimerEvent.TIMER, adDurationTick);
+                _durationTimer.removeEventListener(TimerEvent.TIMER_COMPLETE, adDurationComplete);
+                _durationTimer = null;
+            }
+
+            adStopped();
         }
     }
 }

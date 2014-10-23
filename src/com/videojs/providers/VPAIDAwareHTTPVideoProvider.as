@@ -17,7 +17,8 @@ package com.videojs.providers{
             super();
             adView = _model.adView;
             
-            adView.addEventListener(VPAIDEvent.AdStopped, function():void {
+            adView.addEventListener(VPAIDEvent.AdStopped, function(evt: Object):void {
+                evt.currentTarget.removeEventListener(evt.type, arguments.callee);
                 stop();
                 play();
             })
