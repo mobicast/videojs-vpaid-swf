@@ -148,7 +148,14 @@ package com.videojs.vpaid {
         }
 
         private function adDurationTick(evt: Object): void {
-           _model.broadcastEventExternally(VPAIDEvent.AdPluginEventTimeRemaining); 
+            _model.broadcastEventExternally(VPAIDEvent.AdPluginEventTimeRemaining); 
+
+            ExternalInterface.call("console.log", _vpaidAd.adSkippableState)
+
+            if (_vpaidAd.adSkippableState) {
+                _model.broadcastEventExternally(VPAIDEvent.AdPluginEventCanSkip); 
+            }
+
         }
 
         private function adDurationComplete(evt: Object): void {

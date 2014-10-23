@@ -329,9 +329,11 @@ package{
                     onSrcCalled(pValue);
                     break;
                 case "currentTime":
+                    if (_app.model.adView.hasActiveAdAsset) { return; }
                     _app.model.seekBySeconds(Number(pValue));
                     break;
                 case "currentPercent":
+                    if (_app.model.adView.hasActiveAdAsset) { return; }
                     _app.model.seekByPercent(Number(pValue));
                     break;
                 case "muted":

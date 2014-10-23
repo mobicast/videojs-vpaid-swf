@@ -24,5 +24,6 @@ package com.videojs.vpaid.events {
         public static const AdPluginEventStart:String = "adstarted";
         public static const AdPluginEventImpression:String = "adimpression";
         public static const AdPluginEventTimeRemaining:String = "adtimeremaining";
+        public static const AdPluginEventCanSkip:String = "adcanbeskipped";
     }
 }

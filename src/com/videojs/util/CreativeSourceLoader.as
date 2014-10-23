@@ -35,7 +35,8 @@ package com.videojs.util {
 
                     var adSource: Array = [];
                     for each (var creative: XML in creatives.Creative) {
-                        if (!creative..MediaFiles.length()) {
+                        //support only linear for now
+                        if (!creative.Linear.MediaFiles.length()) {
                             continue;
                         }
 
