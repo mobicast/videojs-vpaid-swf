@@ -120,7 +120,6 @@ package com.videojs.vpaid {
         private function succesfullCreativeLoad(evt: Object, asset: Object): void {
             _vpaidAd = evt.target.content.getVPAID();
             _adDuration = asset.duration;
-            ExternalInterface.call("console.log", _adDuration);
             
             _vpaidAd.addEventListener(VPAIDEvent.AdLoaded, function() {
                 adLoaded();
