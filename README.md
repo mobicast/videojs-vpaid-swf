@@ -37,3 +37,11 @@ For integration tests, this project uses [qunit](http://qunitjs.com/). The integ
 In order to run all of the tests, use the links at  [http://localhost:8000/index.html](http://localhost:8000/index.html)
 
 There are very few tests.  Adding to them is a fantastic and much appreciated way to contribute.
+
+
+VPAID Support
+============
+
+Initial VPAID integration has been added. An example can be found in the sandbox/videojs.html
+
+The script in there plus the custom build of the video player should be all that is necessary to get it running with stock Video-JS code.
