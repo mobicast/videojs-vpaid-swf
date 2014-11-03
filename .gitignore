@@ -9,7 +9,4 @@ build
 
 *.orig
 
-sandbox/*
-!sandbox/*.example
-
 .settings/
