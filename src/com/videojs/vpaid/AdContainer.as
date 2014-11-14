@@ -24,7 +24,11 @@ package com.videojs.vpaid {
         }
 
         public function get hasPendingAdAsset(): Boolean {
-            return _creativeContent.length > 0;
+            if (_creativeContent != null && _creativeContent.length > 0) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         public function get hasActiveAdAsset(): Boolean {
