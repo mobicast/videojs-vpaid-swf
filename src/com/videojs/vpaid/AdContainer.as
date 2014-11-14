@@ -5,19 +5,12 @@ package com.videojs.vpaid {
     import flash.display.Sprite;
     import flash.utils.Timer;
     import flash.events.*;
-    import flash.media.Video;
-    import flash.net.NetConnection;
-    import flash.net.NetStream;
     import flash.net.URLRequest;
     import flash.system.LoaderContext;
     import com.videojs.vpaid.events.VPAIDEvent;
-    import com.videojs.structs.ExternalEventName;
-
-    import flash.external.ExternalInterface;
 
     public class AdContainer extends Sprite {
         
-        private var _uiView: VideoJSView;
         private var _model: VideoJSModel;
         private var _creativeContent: Array;
         private var _vpaidAd: *;
@@ -26,8 +19,8 @@ package com.videojs.vpaid {
         private var _durationTimer: Timer;
         private var _adDuration: Number;
         
-        public function AdContainer(model: VideoJSModel){
-            _model = model;
+        public function AdContainer(){
+            _model = VideoJSModel.getInstance();
         }
 
         public function get hasPendingAdAsset(): Boolean {
@@ -54,13 +47,18 @@ package com.videojs.vpaid {
             _creativeContent = adAssets;
         }
 
+        public function resize(width: Number, height: Number, viewMode: String): void {
+            if (hasActiveAdAsset) {
+                _vpaidAd.resizeAd(width, height, viewMode);
+            }
+        }
+
         protected function startDurationTimer(): void {
             _durationTimer = new Timer(1000, _adDuration);
             _durationTimer.addEventListener(TimerEvent.TIMER, adDurationTick);
             _durationTimer.addEventListener(TimerEvent.TIMER_COMPLETE, adDurationComplete);
             _durationTimer.start();
         }
-
 
         public function pausePlayingAd(): void {
             _adIsPlaying = false;
@@ -82,12 +80,11 @@ package com.videojs.vpaid {
 
             dispatchEvent(new VPAIDEvent(VPAIDEvent.AdImpression));
             _model.broadcastEventExternally(VPAIDEvent.AdPluginEventImpression);
-
         }
         
         public function adLoaded(): void {
             addChild(_vpaidAd);
-            _vpaidAd.resizeAd(stage.width, stage.height, "normal");
+            resize(stage.width, stage.height, "normal");
             _vpaidAd.startAd();
             adStarted();
         }
@@ -149,8 +146,6 @@ package com.videojs.vpaid {
 
         private function adDurationTick(evt: Object): void {
             _model.broadcastEventExternally(VPAIDEvent.AdPluginEventTimeRemaining); 
-
-            ExternalInterface.call("console.log", _vpaidAd.adSkippableState)
 
             if (_vpaidAd.adSkippableState) {
                 _model.broadcastEventExternally(VPAIDEvent.AdPluginEventCanSkip); 

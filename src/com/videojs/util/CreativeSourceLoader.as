@@ -2,30 +2,28 @@ package com.videojs.util {
     import flash.events.*
     import flash.net.URLLoader;
     import flash.net.URLRequest;
-    import flash.external.ExternalInterface;
-    import flash.utils.getQualifiedClassName;
+
+    import com.videojs.VideoJSModel;
 
     public class CreativeSourceLoader {
-        protected var _callback:Function;
 
-        public function CreativeSourceLoader(source: String, callback: Function) {
-            _callback = callback;
+        public static function load(source: String) {
             var adCreativeLoader: URLLoader = new URLLoader();
             adCreativeLoader.addEventListener(Event.COMPLETE, creativeLoadComplete);
             adCreativeLoader.addEventListener(IOErrorEvent.IO_ERROR, creativeLoadFailure);
             adCreativeLoader.load(new URLRequest(source));
         }
 
-        private function creativeLoadComplete(e:Event): void {
+        private static function creativeLoadComplete(e:Event): void {
             e.target.removeEventListener(Event.COMPLETE, creativeLoadComplete);
             parseAdSource(e.target.data)
         }
         
-        private function creativeLoadFailure(e:Event): void {
+        private static function creativeLoadFailure(e:Event): void {
             
         }
         
-        private function parseAdSource(source:String): void {
+        private static function parseAdSource(source:String): void {
             var xmlData:XML = null;
             var creativeData:String = source;
             if (creativeData != null) {
@@ -65,12 +63,10 @@ package com.videojs.util {
                         }
                     }
 
-                    _callback.call(null, adSource);
+                    VideoJSModel.getInstance().adContainer.init(adSource);
+
                 } catch(e:Error) {
-                    //ExternalInterface.call("console.log", e.message)
                 }
-            } else {
-                //ExternalInterface.call("console.log", "nothing to load")
             }
         }
     }

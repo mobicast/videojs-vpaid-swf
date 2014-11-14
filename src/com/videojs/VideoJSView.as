@@ -56,12 +56,12 @@ package com.videojs{
             _uiVideo.smoothing = true;
             addChild(_uiVideo);
 
-            _model.adView = new AdContainer(_model);
-            _model.adView.addEventListener(VPAIDEvent.AdLoaded, onAdStart);
-            addChild(_model.adView);
+            _model.adContainer = new AdContainer();
+            _model.adContainer.addEventListener(VPAIDEvent.AdLoaded, onAdLoaded);
+            _model.adContainer.addEventListener(VPAIDEvent.AdStarted, onAdStarted);
+            addChild(_model.adContainer);
             
             _model.videoReference = _uiVideo;
-            
         }
         
         /**
@@ -135,8 +135,8 @@ package com.videojs{
             
             _uiVideo.x = Math.round((_model.stageRect.width - _uiVideo.width) / 2);
             _uiVideo.y = Math.round((_model.stageRect.height - _uiVideo.height) / 2);
-            
 
+            _model.adContainer.resize(stage.width, stage.height, "normal");
         }
 
         private function sizePoster():void{
@@ -231,8 +231,12 @@ package com.videojs{
             _uiPosterImage.visible = false;
         }
 
-        private function onAdStart(e:Object):void {
+        private function onAdLoaded(e:Object):void {
             _uiPosterImage.visible = false;
+        }
+
+        private function onAdStarted(e:Object):void {
+            sizeVideoObject();
         }
         
         private function onMetaData(e:VideoPlaybackEvent):void{        

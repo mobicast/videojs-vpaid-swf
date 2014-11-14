@@ -1,10 +1,7 @@
 package com.videojs {
     
     import flash.display.Sprite;
-    import com.videojs.vpaid.AdContainer;
-    import com.videojs.util.CreativeSourceLoader;
-    import com.videojs.events.VideoJSEvent;
-    
+
     public class VideoJSApp extends Sprite{
         
         private var _uiView:VideoJSView;
@@ -12,20 +9,8 @@ package com.videojs {
         
         public function VideoJSApp(){
             _model = VideoJSModel.getInstance();
-            
-            _model.addEventListener(VideoJSEvent.INIT_DONE, function(evt:Object):void {
-                new CreativeSourceLoader(loaderInfo.parameters.adMetadataSource, postAdRequestInit);
-            });
-        }
-        
-        public function init():void {
             _uiView = new VideoJSView();
             addChild(_uiView);
-        }
-            
-        
-        private function postAdRequestInit(pSrc:Array): void {
-            _model.adView.init(pSrc);
         }
         
         public function get model():VideoJSModel{

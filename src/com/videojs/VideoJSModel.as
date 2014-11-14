@@ -7,6 +7,7 @@ package com.videojs{
     import com.videojs.structs.ExternalEventName;
     import com.videojs.structs.PlaybackType;
     import com.videojs.structs.PlayerMode;
+    import com.videojs.vpaid.AdContainer;
 
     import flash.events.Event;
     import flash.events.EventDispatcher;
@@ -16,8 +17,6 @@ package com.videojs{
     import flash.media.SoundTransform;
     import flash.media.Video;
     import flash.utils.ByteArray;
-
-    import com.videojs.vpaid.AdContainer;
 
     public class VideoJSModel extends EventDispatcher{
 
@@ -42,11 +41,9 @@ package com.videojs{
         private var _rtmpConnectionURL:String = "";
         private var _rtmpStream:String = "";
         private var _poster:String = "";
-        
+
         // ad support
-        var _adView:AdContainer;
-        var _prerollAdMetadata:String = "";
-        var _prerollAdSrc:String = "";
+        private var _adContainer:AdContainer;
 
         private static var _instance:VideoJSModel;
 
@@ -68,13 +65,13 @@ package com.videojs{
             }
             return _instance;
         }
-        
-        public function get adView():AdContainer{
-            return _adView;
+
+        public function get adContainer():AdContainer{
+            return _adContainer;
         }
-        
-        public function set adView(pContainer: AdContainer):void{
-            _adView = pContainer;
+
+        public function set adContainer(pContainer: AdContainer):void{
+            _adContainer = pContainer;
         }
 
         public function get mode():String{
@@ -185,8 +182,8 @@ package com.videojs{
         public function get duration():Number{
             if(_provider){
 
-                if (adView.hasActiveAdAsset) {
-                    return adView.duration;
+                if (adContainer.hasActiveAdAsset) {
+                    return adContainer.duration;
                 }
 
                 return _provider.duration;
@@ -302,8 +299,8 @@ package com.videojs{
          */
         public function get time():Number{
             
-            if (adView.hasActiveAdAsset) {
-                return adView.remainingTime;
+            if (adContainer.hasActiveAdAsset) {
+                return adContainer.remainingTime;
             }
 
             if(_provider){
@@ -433,14 +430,6 @@ package com.videojs{
                 return _provider.paused;
             }
             return false;
-        }
-        
-        public function get prerollAdMetadata():String{
-            return _prerollAdSrc;
-        }
-        
-        public function set prerollAdMetadata(pValue:String):void {
-            _prerollAdSrc = pValue;
         }
 
         /**

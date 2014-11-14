@@ -3,7 +3,6 @@ package com.videojs.events{
     import flash.events.Event;
     
     public class VideoJSEvent extends Event{
-        public static const INIT_DONE:String = "VideoJSEvent.INIT_DONE";
         public static const STAGE_RESIZE:String = "VideoJSEvent.STAGE_RESIZE";
         public static const BACKGROUND_COLOR_SET:String = "VideoJSEvent.BACKGROUND_COLOR_SET";
         public static const POSTER_SET:String = "VideoJSEvent.POSTER_SET";

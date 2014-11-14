@@ -1,23 +1,18 @@
 package com.videojs.providers{
 
-    import flash.events.*;
     import com.videojs.vpaid.AdContainer;
     import com.videojs.vpaid.events.VPAIDEvent;
-    import flash.net.URLLoader;
-    import flash.net.URLRequest;
     import com.videojs.structs.ExternalEventName;
-    
-    import flash.external.ExternalInterface;
 
     public class VPAIDAwareHTTPVideoProvider extends HTTPVideoProvider{
         
-        protected var adView: AdContainer;
+        private var adContainer: AdContainer;
 
         public function VPAIDAwareHTTPVideoProvider(): void {
             super();
-            adView = _model.adView;
+            adContainer = _model.adContainer;
             
-            adView.addEventListener(VPAIDEvent.AdStopped, function(evt: Object):void {
+            adContainer.addEventListener(VPAIDEvent.AdStopped, function(evt: Object):void {
                 evt.currentTarget.removeEventListener(evt.type, arguments.callee);
                 stop();
                 play();
@@ -25,18 +20,18 @@ package com.videojs.providers{
         }
         
         public override function play(): void {
-            if (adView.hasPlayingAdAsset) {
+            if (adContainer.hasPlayingAdAsset) {
                 pause();
                 return;
             }
 
-            if (adView.hasActiveAdAsset) {
+            if (adContainer.hasActiveAdAsset) {
                 resume();
                 return;
             }
 
-            if (adView.hasPendingAdAsset) {
-                adView.loadAdAsset();
+            if (adContainer.hasPendingAdAsset) {
+                adContainer.loadAdAsset();
                 return;
             }
 
@@ -44,8 +39,8 @@ package com.videojs.providers{
         }
 
         public override function pause(): void {
-            if (adView.hasPlayingAdAsset) {
-                adView.pausePlayingAd();
+            if (adContainer.hasPlayingAdAsset) {
+                adContainer.pausePlayingAd();
                 _model.broadcastEventExternally(ExternalEventName.ON_PAUSE);
                 return;
             }
@@ -54,8 +49,8 @@ package com.videojs.providers{
         }
 
         public override function resume(): void {
-            if (adView.hasActiveAdAsset) {
-                adView.resumePlayingAd();
+            if (adContainer.hasActiveAdAsset) {
+                adContainer.resumePlayingAd();
                 _model.broadcastEventExternally(ExternalEventName.ON_RESUME);
                 return;
             }

@@ -5,6 +5,7 @@ package{
     import com.videojs.structs.ExternalEventName;
     import com.videojs.structs.ExternalErrorEventName;
     import com.videojs.Base64;
+    import com.videojs.util.CreativeSourceLoader;
 
     import flash.display.Sprite;
     import flash.display.StageAlign;
@@ -48,7 +49,7 @@ package{
             if(ExternalInterface.available){
                 registerExternalMethods();
             }
-            
+
             _app = new VideoJSApp();
             
             addChild(_app);
@@ -63,9 +64,6 @@ package{
             _ctxMenu.hideBuiltInItems();
             _ctxMenu.customItems.push(_ctxVersion, _ctxAbout);
             this.contextMenu = _ctxMenu;
-            
-            _app.init();
-
         }
         
         private function registerExternalMethods():void{
@@ -159,10 +157,8 @@ package{
             }
             
             if (loaderInfo.parameters.adMetadataSource != undefined) {
-                _app.model.prerollAdMetadata = loaderInfo.parameters.adMetadataSource;
+                CreativeSourceLoader.load(loaderInfo.parameters.adMetadataSource);
             }
-            
-            _app.model.broadcastEvent(new VideoJSEvent(VideoJSEvent.INIT_DONE, {}));
         }
         
         private function onAddedToStage(e:Event):void{
@@ -329,11 +325,11 @@ package{
                     onSrcCalled(pValue);
                     break;
                 case "currentTime":
-                    if (_app.model.adView.hasActiveAdAsset) { return; }
+                    if (_app.model.adContainer.hasActiveAdAsset) { return; }
                     _app.model.seekBySeconds(Number(pValue));
                     break;
                 case "currentPercent":
-                    if (_app.model.adView.hasActiveAdAsset) { return; }
+                    if (_app.model.adContainer.hasActiveAdAsset) { return; }
                     _app.model.seekByPercent(Number(pValue));
                     break;
                 case "muted":
