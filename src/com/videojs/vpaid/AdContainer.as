@@ -12,7 +12,7 @@ package com.videojs.vpaid {
     public class AdContainer extends Sprite {
         
         private var _model: VideoJSModel;
-        private var _creativeContent: Array;
+        private var _creativeContent: Array = [];
         private var _vpaidAd: *;
         private var _adIsPlaying: Boolean = false;
 
@@ -24,7 +24,7 @@ package com.videojs.vpaid {
         }
 
         public function get hasPendingAdAsset(): Boolean {
-            if (_creativeContent != null && _creativeContent.length > 0) {
+            if (_creativeContent.length > 0) {
                 return true;
             } else {
                 return false;
