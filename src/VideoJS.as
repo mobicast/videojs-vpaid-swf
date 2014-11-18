@@ -5,7 +5,6 @@ package{
     import com.videojs.structs.ExternalEventName;
     import com.videojs.structs.ExternalErrorEventName;
     import com.videojs.Base64;
-    import com.videojs.util.CreativeSourceLoader;
 
     import flash.display.Sprite;
     import flash.display.StageAlign;
@@ -135,14 +134,6 @@ package{
               } else {
                 _app.model.srcFromFlashvars = String(loaderInfo.parameters.src);
               }
-            } else{
-              if(loaderInfo.parameters.rtmpConnection != undefined && loaderInfo.parameters.rtmpConnection != ""){
-                _app.model.rtmpConnectionURL = loaderInfo.parameters.rtmpConnection;
-              }
-
-              if(loaderInfo.parameters.rtmpStream != undefined && loaderInfo.parameters.rtmpStream != ""){
-                _app.model.rtmpStream = loaderInfo.parameters.rtmpStream;
-              }
             }
             
             if(loaderInfo.parameters.readyFunction != undefined){
@@ -154,10 +145,6 @@ package{
                         throw new Error(e.message);
                     }
                 }
-            }
-            
-            if (loaderInfo.parameters.adMetadataSource != undefined) {
-                CreativeSourceLoader.load(loaderInfo.parameters.adMetadataSource);
             }
         }
         
@@ -281,12 +268,6 @@ package{
                 case "videoHeight":
                     return _app.model.videoHeight;
                     break;
-                case "rtmpConnection":
-                    return _app.model.rtmpConnectionURL;
-                    break;     
-                case "rtmpStream":
-                    return _app.model.rtmpStream;
-                    break;                                       
             }
             return null;
         }
@@ -337,12 +318,6 @@ package{
                     break;
                 case "volume":
                     _app.model.volume = Number(pValue);
-                    break;
-                case "rtmpConnection":
-                    _app.model.rtmpConnectionURL = String(pValue);
-                    break;
-                case "rtmpStream":
-                    _app.model.rtmpStream = String(pValue);
                     break;
                 default:
                     _app.model.broadcastErrorEventExternally(ExternalErrorEventName.PROPERTY_NOT_FOUND, pPropertyName);

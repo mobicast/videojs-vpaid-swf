@@ -38,8 +38,6 @@ package com.videojs{
         private var _preload:Boolean = true;
         private var _loop:Boolean = false;
         private var _src:String = "";
-        private var _rtmpConnectionURL:String = "";
-        private var _rtmpStream:String = "";
         private var _poster:String = "";
 
         // ad support
@@ -81,9 +79,6 @@ package com.videojs{
         public function set mode(pMode:String):void {
             switch(pMode){
                 case PlayerMode.VIDEO:
-                    _mode = pMode;
-                    break;
-                case PlayerMode.AUDIO:
                     _mode = pMode;
                     break;
                 default:
@@ -181,11 +176,6 @@ package com.videojs{
 
         public function get duration():Number{
             if(_provider){
-
-                if (adContainer.hasActiveAdAsset) {
-                    return adContainer.duration;
-                }
-
                 return _provider.duration;
             }
             return 0;
@@ -212,8 +202,6 @@ package com.videojs{
         }
         public function set src(pValue:String):void {
             _src = pValue;
-            _rtmpConnectionURL = "";
-            _rtmpStream = "";
             _currentPlaybackType = PlaybackType.HTTP;
             broadcastEventExternally(ExternalEventName.ON_SRC_CHANGE, _src);
             initProvider();
@@ -222,38 +210,6 @@ package com.videojs{
             }
             else if(_preload){
                 _provider.load();
-            }
-        }
-
-        public function get rtmpConnectionURL():String{
-            return _rtmpConnectionURL;
-        }
-        public function set rtmpConnectionURL(pURL:String):void {
-            _src = "";
-            _rtmpConnectionURL = pURL;
-        }
-
-        public function get rtmpStream():String{
-            return _rtmpStream;
-        }
-        public function set rtmpStream(pValue:String):void {
-            _src = "";
-            _rtmpStream = pValue;
-            broadcastEventExternally(ExternalEventName.ON_SRC_CHANGE, _src);
-            if (_provider != null && _currentPlaybackType == PlaybackType.RTMP) {
-                var __src:Object = {
-                    connectionURL: _rtmpConnectionURL,
-                    streamURL: _rtmpStream
-                };
-                _provider.src = __src;
-            }
-            else {
-                _currentPlaybackType = PlaybackType.RTMP;
-                initProvider();
-            }
-
-            if(_autoplay){
-                play();
             }
         }
 
@@ -298,11 +254,6 @@ package com.videojs{
          *
          */
         public function get time():Number{
-            
-            if (adContainer.hasActiveAdAsset) {
-                return adContainer.remainingTime;
-            }
-
             if(_provider){
                 return _provider.time;
             }
@@ -616,28 +567,13 @@ package com.videojs{
                         __src = {
                             path: _src
                         };
-                        _provider = new VPAIDAwareHTTPVideoProvider();
-                        _provider.attachVideo(_videoReference);
-                        _provider.init(__src, _autoplay);
-                    }
-                    else if(_currentPlaybackType == PlaybackType.RTMP){
-                        __src = {
-                            connectionURL: _rtmpConnectionURL,
-                            streamURL: _rtmpStream
-                        };
-                        _provider = new RTMPVideoProvider();
+                        _provider = new VpaidProvider();
                         _provider.attachVideo(_videoReference);
                         _provider.init(__src, _autoplay);
                     }
 
                     break;
-                case PlayerMode.AUDIO:
-                    __src = {
-                        path:_src
-                    };
-                    _provider = new HTTPAudioProvider();
-                    _provider.init(__src, _autoplay);
-                    break;
+
                 default:
                     broadcastEventExternally(ExternalErrorEventName.UNSUPPORTED_MODE);
             }
