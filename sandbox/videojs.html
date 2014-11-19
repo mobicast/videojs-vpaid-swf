@@ -7,62 +7,21 @@
     <link href="../node_modules/video.js/dist/video-js/video-js.css" rel="stylesheet" type="text/css">
     <!-- video.js must be in the <head> for older IEs to work. -->
     <script src="../node_modules/video.js/dist/video-js/video.dev.js"></script>
-
-    <!-- Unless using the CDN hosted version, update the URL to the Flash SWF -->
-    <style>
-        .vjs-skip-ad-button {
-            background: #fff;
-            color: #000;
-            position: absolute;
-            bottom: 40px;
-            right:0;
-            padding: 0.8em;
-            cursor: pointer;
-        }
-    </style>
 </head>
 <body>
 
 <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" width="640" height="264"
        poster="http://video-js.zencoder.com/oceans-clip.png"
-       data-setup='{"techOrder": ["flash"]}'>
-    <source src="http://video-js.zencoder.com/oceans-clip.mp4" type='video/mp4' />
+       data-setup='{"techOrder": ["vpaid"]}'>
+    <!-- this path needs to be modified to an absolute path for testing -->
+    <source src="../sandbox/exampleadvpaid2.swf" type='application/x-shockwave-flash' />
 </video>
 
 <script>
-
-    vjs.SkipAdButton = vjs.Button.extend();
-
-    vjs.SkipAdButton.prototype.createEl = function(){
-      return vjs.Button.prototype.createEl.call(this, 'div', {
-        className: 'vjs-skip-ad-button',
-        innerHTML: 'Skip Ad...',
-        'aria-label': 'skip ad'
-      });
-    };
-
-    vjs.SkipAdButton.prototype.onClick = function(){
-      console.log("skip");
-    };
-
     videojs('example_video_1', {
-        flash: {
-            swf: "../dist/video-js.swf",
-            flashVars: {
-                adMetadataSource: "vast2VPAIDLinear.xml"
-            }  
+        vpaid: {
+            swf: "../dist/video-js.swf"
         }
-    }, function() {
-        var player = this;
-        player.on("adstarted", function() {
-            player.trigger("firstplay");
-            player.trigger("play");
-        })
-
-        player.on("adcanbeskipped", function() {
-            console.log("test")
-            player.addChild('SkipAdButton');
-        })
     });
 
 </script>
