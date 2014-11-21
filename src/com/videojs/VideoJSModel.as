@@ -42,6 +42,7 @@ package com.videojs{
 
         // ad support
         private var _adContainer:AdContainer;
+        private var _adParameters:String = "";
 
         private static var _instance:VideoJSModel;
 
@@ -211,6 +212,13 @@ package com.videojs{
             else if(_preload){
                 _provider.load();
             }
+        }
+
+        public function get adParameters():String{
+            return _adParameters;
+        }
+        public function set adParameters(pValue:String):void {
+            _adParameters = pValue;
         }
 
         /**

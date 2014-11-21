@@ -128,14 +128,12 @@ package com.videojs.providers{
         public function pause(): void {
             if (_adContainer.playing) {
                 _adContainer.pausePlayingAd();
-                return;
             }
         }
 
         public function resume(): void {
             if (_adContainer.hasActiveAdAsset) {
                 _adContainer.resumePlayingAd();
-                return;
             }
         }
 

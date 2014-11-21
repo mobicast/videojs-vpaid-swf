@@ -128,11 +128,11 @@ package com.videojs.vpaid {
             });
             loader.contentLoaderInfo.addEventListener(SecurityErrorEvent.SECURITY_ERROR, 
                 function(evt:SecurityErrorEvent): void {
-                    //throwAdError('initError: Security error '+evt.text);
+                    throw new Error(evt.text);
                 });
             loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, 
                 function(evt:IOErrorEvent): void {
-                    //throwAdError('initError: Error loading '+evt.text);
+                    throw new Error(evt.text);
                 });
             loader.load(new URLRequest(_src), loaderContext);
         }
@@ -143,7 +143,6 @@ package com.videojs.vpaid {
             var duration = _vpaidAd.adDuration,
                 width = _vpaidAd.adWidth,
                 height = _vpaidAd.adHeight;
-
 
             if (!isNaN(duration)) {
                 _adDuration = duration;
@@ -168,7 +167,8 @@ package com.videojs.vpaid {
             });
 
             //TODO: get rid of hardcoded bitrate
-            _vpaidAd.initAd(width, height, "normal", 800, "", "");
+            _vpaidAd.handshakeVersion("2.0");
+            _vpaidAd.initAd(width, height, "normal", 800, _model.adParameters);
         }
 
         private function adDurationComplete(evt: Object): void {

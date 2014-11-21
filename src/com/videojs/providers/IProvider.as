@@ -111,7 +111,7 @@ package com.videojs.providers{
          * Should return a boolean value that indicates whether or not this provider uses the NetStream class.
          */
         function get usesNetStream():Boolean;
-        
+
         /**
          * Should return an object that contains metadata properties, or an empty object if metadata doesn't exist.
          */

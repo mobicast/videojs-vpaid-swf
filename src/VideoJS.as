@@ -319,6 +319,9 @@ package{
                 case "volume":
                     _app.model.volume = Number(pValue);
                     break;
+                case "adParameters":
+                    _app.model.adParameters = String(pValue);
+                    break;
                 default:
                     _app.model.broadcastErrorEventExternally(ExternalErrorEventName.PROPERTY_NOT_FOUND, pPropertyName);
                     break;
