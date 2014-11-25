@@ -9,9 +9,6 @@ package com.videojs{
     import flash.events.Event;
     import flash.events.IOErrorEvent;
     import flash.events.SecurityErrorEvent;
-    import flash.external.ExternalInterface;
-    import flash.geom.Rectangle;
-    import flash.media.Video;
     import flash.net.URLRequest;
     import flash.system.LoaderContext;
     import com.videojs.vpaid.AdContainer;
@@ -19,7 +16,6 @@ package com.videojs{
     
     public class VideoJSView extends Sprite{
         
-        private var _uiVideo:Video;
         private var _uiPosterContainer:Sprite;
         private var _uiPosterImage:Loader;
         private var _uiBackground:Sprite;
@@ -33,9 +29,7 @@ package com.videojs{
             _model.addEventListener(VideoJSEvent.BACKGROUND_COLOR_SET, onBackgroundColorSet);
             _model.addEventListener(VideoJSEvent.STAGE_RESIZE, onStageResize);
             _model.addEventListener(VideoPlaybackEvent.ON_STREAM_START, onStreamStart);
-            _model.addEventListener(VideoPlaybackEvent.ON_META_DATA, onMetaData);
-            _model.addEventListener(VideoPlaybackEvent.ON_VIDEO_DIMENSION_UPDATE, onDimensionUpdate);
-            
+
             _uiBackground = new Sprite();
             _uiBackground.graphics.beginFill(_model.backgroundColor, 1);
             _uiBackground.graphics.drawRect(0, 0, _model.stageRect.width, _model.stageRect.height);
@@ -47,21 +41,11 @@ package com.videojs{
             _uiPosterImage = new Loader();
             _uiPosterImage.visible = false;
             _uiPosterContainer.addChild(_uiPosterImage);
-            
             addChild(_uiPosterContainer);
-            
-            _uiVideo = new Video();
-            _uiVideo.width = _model.stageRect.width;
-            _uiVideo.height = _model.stageRect.height;
-            _uiVideo.smoothing = true;
-            addChild(_uiVideo);
 
             _model.adContainer = new AdContainer();
             _model.adContainer.addEventListener(VPAIDEvent.AdLoaded, onAdLoaded);
-            _model.adContainer.addEventListener(VPAIDEvent.AdStarted, onAdStarted);
             addChild(_model.adContainer);
-            
-            _model.videoReference = _uiVideo;
         }
         
         /**
@@ -92,51 +76,6 @@ package com.videojs{
                     
                 }
             }
-        }
-
-        private function sizeVideoObject():void{
-            
-            var __targetWidth:int, __targetHeight:int;
-            
-            var __availableWidth:int = _model.stageRect.width;
-            var __availableHeight:int = _model.stageRect.height;
-            
-            var __nativeWidth:int = 100;
-            
-            if(_model.metadata.width != undefined){
-                __nativeWidth = Number(_model.metadata.width);
-            }
-            
-            if(_uiVideo.videoWidth != 0){
-                __nativeWidth = _uiVideo.videoWidth;
-            }
-            
-            var __nativeHeight:int = 100;
-            
-            if(_model.metadata.width != undefined){
-                __nativeHeight = Number(_model.metadata.height);
-            }
-            
-            if(_uiVideo.videoWidth != 0){
-                __nativeHeight = _uiVideo.videoHeight;
-            }
-
-            // first, size the whole thing down based on the available width
-            __targetWidth = __availableWidth;
-            __targetHeight = __targetWidth * (__nativeHeight / __nativeWidth);
-            
-            if(__targetHeight > __availableHeight){
-                __targetWidth = __targetWidth * (__availableHeight / __targetHeight);
-                __targetHeight = __availableHeight;
-            }
-
-            _uiVideo.width = __targetWidth;
-            _uiVideo.height = __targetHeight;
-            
-            _uiVideo.x = Math.round((_model.stageRect.width - _uiVideo.width) / 2);
-            _uiVideo.y = Math.round((_model.stageRect.height - _uiVideo.height) / 2);
-
-            _model.adContainer.resize(stage.width, stage.height, "normal");
         }
 
         private function sizePoster():void{
@@ -192,7 +131,7 @@ package com.videojs{
             _uiBackground.graphics.drawRect(0, 0, _model.stageRect.width, _model.stageRect.height);
             _uiBackground.graphics.endFill();
             sizePoster();
-            sizeVideoObject();
+            _model.adContainer.resize(_model.stageRect.width, _model.stageRect.height)
         }
         
         private function onPosterSet(e:VideoJSEvent):void{
@@ -233,18 +172,6 @@ package com.videojs{
 
         private function onAdLoaded(e:Object):void {
             _uiPosterImage.visible = false;
-        }
-
-        private function onAdStarted(e:Object):void {
-            sizeVideoObject();
-        }
-        
-        private function onMetaData(e:VideoPlaybackEvent):void{        
-            sizeVideoObject();
-        }
-
-        private function onDimensionUpdate(e:VideoPlaybackEvent):void{
-            sizeVideoObject();
         }
         
     }

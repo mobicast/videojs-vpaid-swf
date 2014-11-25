@@ -5,7 +5,7 @@ package{
     import com.videojs.structs.ExternalEventName;
     import com.videojs.structs.ExternalErrorEventName;
     import com.videojs.Base64;
-
+    import com.videojs.vpaid.events.VPAIDEvent;
     import flash.display.Sprite;
     import flash.display.StageAlign;
     import flash.display.StageScaleMode;
@@ -54,6 +54,7 @@ package{
             addChild(_app);
 
             _app.model.stageRect = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
+            _app.model.addEventListener(VPAIDEvent.AdLoaded, onAdLoaded);
 
             // add content-menu version info
 
@@ -94,11 +95,8 @@ package{
                 }
             }
             finally{}
-            
-            
-            
-            setTimeout(finish, 50);
 
+            setTimeout(finish, 50);
         }
         
         private function finish():void{
@@ -263,10 +261,10 @@ package{
                     return _app.model.bytesTotal;
                     break;
                 case "videoWidth":
-                    return _app.model.videoWidth;
+                    return _app.model.width;
                     break;
                 case "videoHeight":
-                    return _app.model.videoHeight;
+                    return _app.model.height;
                     break;
             }
             return null;
@@ -322,6 +320,15 @@ package{
                 case "adParameters":
                     _app.model.adParameters = String(pValue);
                     break;
+                case "bitrate":
+                    _app.model.bitrate = Number(pValue);
+                    break;
+                case "width":
+                    _app.model.width = Number(pValue);
+                    break;
+                case "height":
+                    _app.model.height = Number(pValue);
+                    break;
                 default:
                     _app.model.broadcastErrorEventExternally(ExternalErrorEventName.PROPERTY_NOT_FOUND, pPropertyName);
                     break;
@@ -355,7 +362,6 @@ package{
             // and provide a reference to this swf for passing data from the soure buffer
             openExternalMSObject(pSrc);
 
-            // ExternalInterface.call('videojs.MediaSource.sourceBufferUrls["' + pSrc + '"]', ExternalInterface.objectID);
           } else {
             _app.model.src = String(pSrc);
           }
@@ -388,6 +394,9 @@ package{
         private function onStageClick(e:MouseEvent):void{
             _app.model.broadcastEventExternally(ExternalEventName.ON_STAGE_CLICK);
         }
-        
+
+        private function onAdLoaded(e:Event):void{
+            _app.model.adContainer.resize(stage.stageWidth, stage.stageHeight);
+        }
     }
 }

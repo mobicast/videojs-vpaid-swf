@@ -25,6 +25,8 @@ package com.videojs.providers{
          */
         function get duration():Number;
 
+        function set duration(pNumber:Number):void;
+
         /**
          * Appends the segment data in a ByteArray to the source buffer.
          * @param  bytes the ByteArray of data to append.

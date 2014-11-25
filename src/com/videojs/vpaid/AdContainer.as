@@ -20,8 +20,7 @@ package com.videojs.vpaid {
         private var _hasEnded:Boolean = false;
         private var _loadStarted:Boolean = false;
         private var _durationTimer: Timer;
-        private var _adDuration: Number = 0;
-        
+
         public function AdContainer(){
             _model = VideoJSModel.getInstance();
         }
@@ -38,10 +37,6 @@ package com.videojs.vpaid {
             return _isPaused;
         }
 
-        public function get duration(): Number {
-            return _adDuration;
-        }
-
         public function get ended(): Boolean {
             return _hasEnded;
         }
@@ -54,21 +49,21 @@ package com.videojs.vpaid {
             return _durationTimer.currentCount;
         }
 
-        public function set src(pSrc:String):void {
+        public function set src(pSrc:String): void {
             _src = pSrc;
         }
         public function get src():String {
             return _src;
         }
 
-        public function resize(width: Number, height: Number, viewMode: String): void {
+        public function resize(width: Number, height: Number, viewMode: String = "normal"): void {
             if (hasActiveAdAsset) {
                 _vpaidAd.resizeAd(width, height, viewMode);
             }
         }
 
         protected function startDurationTimer(): void {
-            _durationTimer = new Timer(1000, _adDuration);
+            _durationTimer = new Timer(1000, _model.duration);
             _durationTimer.addEventListener(TimerEvent.TIMER_COMPLETE, adDurationComplete);
             _durationTimer.start();
         }
@@ -99,7 +94,8 @@ package com.videojs.vpaid {
         
         public function adLoaded(): void {
             addChild(_vpaidAd);
-            resize(stage.width, stage.height, "normal");
+            // Inform the model that the ad has loaded.
+            _model.dispatchEvent(new VPAIDEvent(VPAIDEvent.AdLoaded));
             _vpaidAd.startAd();
             adStarted();
         }
@@ -144,14 +140,14 @@ package com.videojs.vpaid {
                 width = _vpaidAd.adWidth,
                 height = _vpaidAd.adHeight;
 
-            if (!isNaN(duration)) {
-                _adDuration = duration;
+            if (!isNaN(duration) && duration > 0) {
+                _model.duration = duration;
             }
-            if (isNaN(width) || width == 0) {
-                width = 100;
+            if (!isNaN(width) && width > 0) {
+                _model.width = width;
             }
-            if (isNaN(height) || height == 0) {
-                height = 100;
+            if (!isNaN(height) && height > 0) {
+                _model.height = height;
             }
 
             _vpaidAd.addEventListener(VPAIDEvent.AdLoaded, function():void {
@@ -166,9 +162,8 @@ package com.videojs.vpaid {
                 adError();
             });
 
-            //TODO: get rid of hardcoded bitrate
             _vpaidAd.handshakeVersion("2.0");
-            _vpaidAd.initAd(width, height, "normal", 800, _model.adParameters);
+            _vpaidAd.initAd(_model.width, _model.height, "normal", _model.bitrate, _model.adParameters);
         }
 
         private function adDurationComplete(evt: Object): void {

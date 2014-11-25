@@ -29,11 +29,11 @@ package com.videojs.providers{
         }
 
         public function get duration():Number {
-            if (_adContainer.hasActiveAdAsset) {
-                return _adContainer.duration;
-            } else {
-                return 0;
-            }
+            return VideoJSModel.getInstance().duration;
+        }
+
+        public function set duration(pNumber:Number):void {
+            VideoJSModel.getInstance().duration = pNumber;
         }
 
         public function appendBuffer(bytes:ByteArray):void {}
@@ -108,18 +108,17 @@ package com.videojs.providers{
 
         public function init(pSrc:Object, pAutoplay:Boolean):void {
             _adContainer.src = pSrc.path;
+
+            load();
         }
 
         public function load():void{
-            _adContainer.loadAdAsset();
+            if(!_adContainer.loadStarted) {
+                _adContainer.loadAdAsset();
+            }
         }
 
         public function play(): void {
-
-            if(!_adContainer.loadStarted){
-                load();
-            }
-
             if (_adContainer.hasActiveAdAsset) {
                 resume();
             }

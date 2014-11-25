@@ -15,14 +15,12 @@ package com.videojs{
     import flash.geom.Rectangle;
     import flash.media.SoundMixer;
     import flash.media.SoundTransform;
-    import flash.media.Video;
     import flash.utils.ByteArray;
 
     public class VideoJSModel extends EventDispatcher{
 
         private var _masterVolume:SoundTransform;
         private var _currentPlaybackType:String;
-        private var _videoReference:Video;
         private var _lastSetVolume:Number = 1;
         private var _provider:IProvider;
 
@@ -39,6 +37,10 @@ package com.videojs{
         private var _loop:Boolean = false;
         private var _src:String = "";
         private var _poster:String = "";
+        private var _bitrate:Number = 800;
+        private var _width:Number = 0;
+        private var _height:Number = 0;
+        private var _duration:Number = 0;
 
         // ad support
         private var _adContainer:AdContainer;
@@ -145,13 +147,6 @@ package com.videojs{
             }
         }
 
-        public function get videoReference():Video{
-            return _videoReference;
-        }
-        public function set videoReference(pVideo:Video):void {
-            _videoReference = pVideo;
-        }
-
         public function get metadata():Object{
             if(_provider){
                 return _provider.metadata;
@@ -176,16 +171,11 @@ package com.videojs{
         }
 
         public function get duration():Number{
-            if(_provider){
-                return _provider.duration;
-            }
-            return 0;
+            return _duration;
         }
 
         public function set duration(value:Number):void {
-            if(_provider && _provider is HTTPVideoProvider) {
-                (_provider as HTTPVideoProvider).duration = value;
-            }
+            _duration = value;
         }
 
         public function get autoplay():Boolean{
@@ -219,6 +209,24 @@ package com.videojs{
         }
         public function set adParameters(pValue:String):void {
             _adParameters = pValue;
+        }
+        public function get bitrate():Number{
+            return _bitrate;
+        }
+        public function set bitrate(pValue:Number):void {
+            _bitrate = pValue;
+        }
+        public function get width():Number{
+            return _width;
+        }
+        public function set width(pValue:Number):void {
+            _width = pValue;
+        }
+        public function get height():Number{
+            return _height;
+        }
+        public function set height(pValue:Number):void {
+            _height = pValue;
         }
 
         /**
@@ -301,7 +309,6 @@ package com.videojs{
                 return _provider.readyState;
             }
             return 0;
-
         }
 
         public function get preload():Boolean{
@@ -347,34 +354,6 @@ package com.videojs{
                 return _provider.bytesTotal;
             }
             return 0;
-        }
-
-        /**
-         * Returns the pixel width of the currently playing video as interpreted by the decompressor.
-         * @return
-         *
-         */
-        public function get videoWidth():int{
-            if(_videoReference != null){
-                return _videoReference.videoWidth;
-            }
-            else{
-                return 0;
-            }
-        }
-
-        /**
-         * Returns the pixel height of the currently playing video as interpreted by the decompressor.
-         * @return
-         *
-         */
-        public function get videoHeight():int{
-            if(_videoReference != null){
-                return _videoReference.videoHeight;
-            }
-            else{
-                return 0;
-            }
         }
 
         public function get playing():Boolean{
@@ -576,7 +555,6 @@ package com.videojs{
                             path: _src
                         };
                         _provider = new VpaidProvider();
-                        _provider.attachVideo(_videoReference);
                         _provider.init(__src, _autoplay);
                     }
 
