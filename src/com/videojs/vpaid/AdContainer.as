@@ -46,7 +46,10 @@ package com.videojs.vpaid {
         }
 
         public function get remainingTime(): Number {
-            return _durationTimer.currentCount;
+            if (_durationTimer) {
+                return _durationTimer.currentCount;
+            }
+            return _model.duration;
         }
 
         public function set src(pSrc:String): void {
