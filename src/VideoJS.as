@@ -5,7 +5,6 @@ package{
     import com.videojs.structs.ExternalEventName;
     import com.videojs.structs.ExternalErrorEventName;
     import com.videojs.Base64;
-    import com.videojs.vpaid.events.VPAIDEvent;
     import flash.display.Sprite;
     import flash.display.StageAlign;
     import flash.display.StageScaleMode;
@@ -54,7 +53,6 @@ package{
             addChild(_app);
 
             _app.model.stageRect = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
-            _app.model.addEventListener(VPAIDEvent.AdLoaded, onAdLoaded);
 
             // add content-menu version info
 
@@ -119,10 +117,6 @@ package{
             
             if(loaderInfo.parameters.preload === "none"){
                 _app.model.preload = false;
-            }
-            
-            if(loaderInfo.parameters.poster != undefined && loaderInfo.parameters.poster != ""){
-                _app.model.poster = String(loaderInfo.parameters.poster);
             }
             
             if(loaderInfo.parameters.src != undefined && loaderInfo.parameters.src != ""){
@@ -297,7 +291,6 @@ package{
                     _app.model.preload = _app.model.humanToBoolean(pValue);
                     break;
                 case "poster":
-                    _app.model.poster = String(pValue);
                     break;
                 case "src":
                     // same as when vjs_src() is called directly
@@ -393,10 +386,6 @@ package{
 
         private function onStageClick(e:MouseEvent):void{
             _app.model.broadcastEventExternally(ExternalEventName.ON_STAGE_CLICK);
-        }
-
-        private function onAdLoaded(e:Event):void{
-            _app.model.adContainer.resize(stage.stageWidth, stage.stageHeight);
         }
     }
 }

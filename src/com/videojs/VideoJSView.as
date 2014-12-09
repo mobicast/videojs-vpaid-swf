@@ -1,23 +1,11 @@
 package com.videojs{
     
     import com.videojs.events.*;
-    import com.videojs.structs.ExternalErrorEventName;
-    
-    import flash.display.Bitmap;
-    import flash.display.Loader;
     import flash.display.Sprite;
-    import flash.events.Event;
-    import flash.events.IOErrorEvent;
-    import flash.events.SecurityErrorEvent;
-    import flash.net.URLRequest;
-    import flash.system.LoaderContext;
     import com.videojs.vpaid.AdContainer;
-    import com.videojs.vpaid.events.VPAIDEvent;
     
     public class VideoJSView extends Sprite{
-        
-        private var _uiPosterContainer:Sprite;
-        private var _uiPosterImage:Loader;
+
         private var _uiBackground:Sprite;
         
         private var _model:VideoJSModel;
@@ -25,10 +13,8 @@ package com.videojs{
         public function VideoJSView(){
             
             _model = VideoJSModel.getInstance();
-            _model.addEventListener(VideoJSEvent.POSTER_SET, onPosterSet);
             _model.addEventListener(VideoJSEvent.BACKGROUND_COLOR_SET, onBackgroundColorSet);
             _model.addEventListener(VideoJSEvent.STAGE_RESIZE, onStageResize);
-            _model.addEventListener(VideoPlaybackEvent.ON_STREAM_START, onStreamStart);
 
             _uiBackground = new Sprite();
             _uiBackground.graphics.beginFill(_model.backgroundColor, 1);
@@ -36,86 +22,11 @@ package com.videojs{
             _uiBackground.graphics.endFill();
             _uiBackground.alpha = _model.backgroundAlpha;
             addChild(_uiBackground);
-            
-            _uiPosterContainer = new Sprite();
-            _uiPosterImage = new Loader();
-            _uiPosterImage.visible = false;
-            _uiPosterContainer.addChild(_uiPosterImage);
-            addChild(_uiPosterContainer);
 
             _model.adContainer = new AdContainer();
-            _model.adContainer.addEventListener(VPAIDEvent.AdLoaded, onAdLoaded);
             addChild(_model.adContainer);
         }
-        
-        /**
-         * Loads the poster frame, if one has been specified. 
-         * 
-         */        
-        private function loadPoster():void{
-            if(_model.poster != ""){
-                if(_uiPosterImage != null){
-                    _uiPosterImage.contentLoaderInfo.removeEventListener(Event.COMPLETE, onPosterLoadComplete);
-                    _uiPosterImage.contentLoaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, onPosterLoadError);
-                    _uiPosterImage.contentLoaderInfo.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onPosterLoadSecurityError);
-                    _uiPosterImage.parent.removeChild(_uiPosterImage);
-                    _uiPosterImage = null;
-                }
-                var __request:URLRequest = new URLRequest(_model.poster);
-                _uiPosterImage = new Loader();
-                _uiPosterImage.visible = false;
-                var __context:LoaderContext = new LoaderContext();
-                //__context.checkPolicyFile = true;
-                _uiPosterImage.contentLoaderInfo.addEventListener(Event.COMPLETE, onPosterLoadComplete);
-                _uiPosterImage.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onPosterLoadError);
-                _uiPosterImage.contentLoaderInfo.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onPosterLoadSecurityError);
-                try{
-                    _uiPosterImage.load(__request, __context);
-                }
-                catch(e:Error){
-                    
-                }
-            }
-        }
 
-        private function sizePoster():void{
-
-            // wrap this stuff in a try block to avoid freezing the call stack on an image
-            // asset that loaded successfully, but doesn't have an associated crossdomain
-            // policy : /
-            try{
-                // only do this stuff if there's a loaded poster to operate on
-                if(_uiPosterImage.content != null){
-    
-                    var __targetWidth:int, __targetHeight:int;
-                
-                    var __availableWidth:int = _model.stageRect.width;
-                    var __availableHeight:int = _model.stageRect.height;
-            
-                    var __nativeWidth:int = _uiPosterImage.content.width;
-                    var __nativeHeight:int = _uiPosterImage.content.height;
-
-                    // first, size the whole thing down based on the available width
-                    __targetWidth = __availableWidth;
-                    __targetHeight = __targetWidth * (__nativeHeight / __nativeWidth);
-            
-                    if(__targetHeight > __availableHeight){
-                        __targetWidth = __targetWidth * (__availableHeight / __targetHeight);
-                        __targetHeight = __availableHeight;
-                    }
-            
-            
-                    _uiPosterImage.width = __targetWidth;
-                    _uiPosterImage.height = __targetHeight;
-            
-                    _uiPosterImage.x = Math.round((_model.stageRect.width - _uiPosterImage.width) / 2);
-                    _uiPosterImage.y = Math.round((_model.stageRect.height - _uiPosterImage.height) / 2);
-                }
-            }
-            catch(e:Error){
-                
-            }
-        }
 
         private function onBackgroundColorSet(e:VideoPlaybackEvent):void{
             _uiBackground.graphics.clear();
@@ -130,48 +41,7 @@ package com.videojs{
             _uiBackground.graphics.beginFill(_model.backgroundColor, 1);
             _uiBackground.graphics.drawRect(0, 0, _model.stageRect.width, _model.stageRect.height);
             _uiBackground.graphics.endFill();
-            sizePoster();
             _model.adContainer.resize(_model.stageRect.width, _model.stageRect.height)
-        }
-        
-        private function onPosterSet(e:VideoJSEvent):void{
-            loadPoster();
-        }
-        
-        private function onPosterLoadComplete(e:Event):void{
-            
-            // turning smoothing on for assets that haven't cleared the security sandbox / crossdomain hurdle
-            // will result in the call stack freezing, so we need to wrap access to Loader.content
-            try{
-                (_uiPosterImage.content as Bitmap).smoothing = true;
-            }
-            catch(e:Error){
-                if (loaderInfo.parameters.debug != undefined && loaderInfo.parameters.debug == "true") {
-                    throw new Error(e.message);
-                }
-            }
-            _uiPosterContainer.addChild(_uiPosterImage);
-            sizePoster();
-            if(!_model.playing){
-                _uiPosterImage.visible = true;
-            }
-            
-        }
-        
-        private function onPosterLoadError(e:IOErrorEvent):void{
-            _model.broadcastErrorEventExternally(ExternalErrorEventName.POSTER_IO_ERROR, e.text);
-        }
-        
-        private function onPosterLoadSecurityError(e:SecurityErrorEvent):void{
-            _model.broadcastErrorEventExternally(ExternalErrorEventName.POSTER_SECURITY_ERROR, e.text);
-        }
-        
-        private function onStreamStart(e:VideoPlaybackEvent):void{
-            _uiPosterImage.visible = false;
-        }
-
-        private function onAdLoaded(e:Object):void {
-            _uiPosterImage.visible = false;
         }
         
     }

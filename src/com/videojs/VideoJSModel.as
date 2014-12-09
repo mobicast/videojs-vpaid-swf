@@ -36,7 +36,6 @@ package com.videojs{
         private var _preload:Boolean = true;
         private var _loop:Boolean = false;
         private var _src:String = "";
-        private var _poster:String = "";
         private var _bitrate:Number = 800;
         private var _width:Number = 0;
         private var _height:Number = 0;
@@ -246,15 +245,6 @@ package com.videojs{
             else if(_preload){
                 _provider.load();
             }
-        }
-
-
-        public function get poster():String{
-            return _poster;
-        }
-        public function set poster(pValue:String):void {
-            _poster = pValue;
-            broadcastEvent(new VideoJSEvent(VideoJSEvent.POSTER_SET));
         }
 
         public function get hasEnded():Boolean{

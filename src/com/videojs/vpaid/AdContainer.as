@@ -72,48 +72,42 @@ package com.videojs.vpaid {
         }
 
         public function pausePlayingAd(): void {
-            _isPlaying = true;
-            _isPaused = true;
-            _durationTimer.stop();
-            _vpaidAd.pauseAd();
-            _model.broadcastEventExternally(ExternalEventName.ON_PAUSE);
+            if (playing && !paused) {
+                _isPlaying = true;
+                _isPaused = true;
+                _durationTimer.stop();
+                _vpaidAd.pauseAd();
+                _model.broadcastEventExternally(ExternalEventName.ON_PAUSE);
+            }
         }
 
         public function resumePlayingAd(): void {
-            _isPlaying = true;
-            _isPaused = false;
-            _durationTimer.start();
-            _vpaidAd.resumeAd();
-            _model.broadcastEventExternally(ExternalEventName.ON_RESUME);
+            if (playing && paused) {
+                _isPlaying = true;
+                _isPaused = false;
+                _durationTimer.start();
+                _vpaidAd.resumeAd();
+                _model.broadcastEventExternally(ExternalEventName.ON_RESUME);
+            }
         }
         
-        public function adStarted(): void {
-            _isPlaying = true;
-            _isPaused = false;
-            startDurationTimer();
-            dispatchEvent(new VPAIDEvent(VPAIDEvent.AdStarted));
-            dispatchEvent(new VPAIDEvent(VPAIDEvent.AdImpression));
-        }
-        
-        public function adLoaded(): void {
+        private function onAdLoaded(): void {
             addChild(_vpaidAd);
-            // Inform the model that the ad has loaded.
-            _model.dispatchEvent(new VPAIDEvent(VPAIDEvent.AdLoaded));
             _vpaidAd.startAd();
-            adStarted();
+            startDurationTimer();
+            _isPlaying = true;
+            _isPaused = false;
         }
         
-        private function adError(): void {
+        private function onAdError(): void {
             _vpaidAd.stopAd();
-            dispatchEvent(new VPAIDEvent(VPAIDEvent.AdStopped));
         }
         
-        public function adStopped(): void {
+        private function onAdStopped(): void {
             if (!_hasEnded) {
                 _isPlaying = false;
                 _hasEnded = true;
                 _vpaidAd = null;
-                dispatchEvent(new VPAIDEvent(VPAIDEvent.AdStopped));
                 _model.broadcastEventExternally(ExternalEventName.ON_PLAYBACK_COMPLETE);
             }
         }
@@ -123,7 +117,7 @@ package com.videojs.vpaid {
             var loader:Loader = new Loader();
             var loaderContext:LoaderContext = new LoaderContext();
             loader.contentLoaderInfo.addEventListener(Event.COMPLETE, function(evt:Object): void {
-                succesfullCreativeLoad(evt);
+                successfulCreativeLoad(evt);
             });
             loader.contentLoaderInfo.addEventListener(SecurityErrorEvent.SECURITY_ERROR, 
                 function(evt:SecurityErrorEvent): void {
@@ -136,7 +130,7 @@ package com.videojs.vpaid {
             loader.load(new URLRequest(_src), loaderContext);
         }
         
-        private function succesfullCreativeLoad(evt: Object): void {
+        private function successfulCreativeLoad(evt: Object): void {
 
             _vpaidAd = evt.target.content.getVPAID();
             var duration = _vpaidAd.hasOwnProperty("adDuration") ? _vpaidAd.adDuration : 0,
@@ -154,19 +148,21 @@ package com.videojs.vpaid {
             }
 
             _vpaidAd.addEventListener(VPAIDEvent.AdLoaded, function():void {
-                adLoaded();
+                onAdLoaded();
             });
             
             _vpaidAd.addEventListener(VPAIDEvent.AdStopped, function():void {
-                adStopped();
+                onAdStopped();
             });
             
             _vpaidAd.addEventListener(VPAIDEvent.AdError, function():void {
-                adError();
+                onAdError();
             });
 
             _vpaidAd.handshakeVersion("2.0");
-            _vpaidAd.initAd(_model.width, _model.height, "normal", _model.bitrate, _model.adParameters);
+
+            // Use stage rect because current ad implementations do not currently provide width/height.
+            _vpaidAd.initAd(_model.stageRect.width, _model.stageRect.height, "normal", _model.bitrate, _model.adParameters);
         }
 
         private function adDurationComplete(evt: Object): void {
@@ -174,7 +170,7 @@ package com.videojs.vpaid {
                 _durationTimer.removeEventListener(TimerEvent.TIMER_COMPLETE, adDurationComplete);
                 _durationTimer = null;
            }
-           adStopped();
+           onAdStopped();
         }
     }
 }

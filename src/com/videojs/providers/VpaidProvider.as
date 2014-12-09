@@ -21,11 +21,7 @@ package com.videojs.providers{
         }
 
         public function get time():Number {
-            if (_adContainer.hasActiveAdAsset) {
-                return _adContainer.remainingTime;
-            } else {
-                return 0;
-            }
+            return _adContainer.remainingTime;
         }
 
         public function get duration():Number {
@@ -119,21 +115,15 @@ package com.videojs.providers{
         }
 
         public function play(): void {
-            if (_adContainer.hasActiveAdAsset) {
-                resume();
-            }
+            resume();
         }
 
         public function pause(): void {
-            if (_adContainer.playing) {
-                _adContainer.pausePlayingAd();
-            }
+            _adContainer.pausePlayingAd();
         }
 
         public function resume(): void {
-            if (_adContainer.hasActiveAdAsset) {
-                _adContainer.resumePlayingAd();
-            }
+           _adContainer.resumePlayingAd();
         }
 
         public function seekBySeconds(pTime:Number):void {}
