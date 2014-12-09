@@ -139,9 +139,9 @@ package com.videojs.vpaid {
         private function succesfullCreativeLoad(evt: Object): void {
 
             _vpaidAd = evt.target.content.getVPAID();
-            var duration = _vpaidAd.adDuration,
-                width = _vpaidAd.adWidth,
-                height = _vpaidAd.adHeight;
+            var duration = _vpaidAd.hasOwnProperty("adDuration") ? _vpaidAd.adDuration : 0,
+                width    = _vpaidAd.hasOwnProperty("adWidth") ? _vpaidAd.adWidth : 0,
+                height   = _vpaidAd.hasOwnProperty("adHeight") ? _vpaidAd.adHeight : 0;
 
             if (!isNaN(duration) && duration > 0) {
                 _model.duration = duration;
