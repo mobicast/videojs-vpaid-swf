@@ -94,6 +94,9 @@ package com.videojs.vpaid {
         private function onAdLoaded(): void {
             addChild(_vpaidAd);
             _vpaidAd.startAd();
+        }
+
+        private function onAdStarted(): void {
             startDurationTimer();
             _isPlaying = true;
             _isPaused = false;
@@ -157,6 +160,10 @@ package com.videojs.vpaid {
             
             _vpaidAd.addEventListener(VPAIDEvent.AdError, function():void {
                 onAdError();
+            });
+
+            _vpaidAd.addEventListener(VPAIDEvent.AdStarted, function():void {
+                onAdStarted();
             });
 
             _vpaidAd.handshakeVersion("2.0");
