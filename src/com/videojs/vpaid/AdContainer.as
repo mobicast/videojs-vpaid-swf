@@ -99,6 +99,8 @@ package com.videojs.vpaid {
 
         private function onAdStarted(): void {
             startDurationTimer();
+            _model.broadcastEventExternally(ExternalEventName.ON_START)
+            _model.broadcastEventExternally(ExternalEventName.ON_VPAID_ADSTARTED);
             _isPlaying = true;
             _isPaused = false;
         }
