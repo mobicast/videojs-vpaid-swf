@@ -5,7 +5,6 @@ package com.videojs.vpaid {
     import com.videojs.structs.ExternalEventName;
     import flash.display.Loader;
     import flash.display.Sprite;
-    import flash.utils.Timer;
     import flash.events.*;
     import flash.net.URLRequest;
     import flash.system.LoaderContext;
@@ -20,7 +19,6 @@ package com.videojs.vpaid {
         private var _isPaused:Boolean = true;
         private var _hasEnded:Boolean = false;
         private var _loadStarted:Boolean = false;
-        private var _durationTimer: Timer;
 
         public function AdContainer(){
             _model = VideoJSModel.getInstance();
@@ -46,11 +44,16 @@ package com.videojs.vpaid {
             return _loadStarted;
         }
 
-        public function get remainingTime(): Number {
-            if (_durationTimer) {
-                return _durationTimer.currentCount;
+        public function get time(): Number {
+            if (_model.duration > 0 &&
+                hasActiveAdAsset &&
+                _vpaidAd.hasOwnProperty("adRemainingTime") &&
+                _vpaidAd.adRemainingTime >= 0 &&
+                !isNaN(_vpaidAd.adRemainingTime)) {
+                return _model.duration - _vpaidAd.adRemainingTime;
+            } else {
+                return 0;
             }
-            return _model.duration;
         }
 
         public function set src(pSrc:String): void {
@@ -66,17 +69,10 @@ package com.videojs.vpaid {
             }
         }
 
-        protected function startDurationTimer(): void {
-            _durationTimer = new Timer(1000, _model.duration);
-            _durationTimer.addEventListener(TimerEvent.TIMER_COMPLETE, adDurationComplete);
-            _durationTimer.start();
-        }
-
         public function pausePlayingAd(): void {
             if (playing && !paused) {
                 _isPlaying = true;
                 _isPaused = true;
-                _durationTimer.stop();
                 _vpaidAd.pauseAd();
                 _model.broadcastEventExternally(ExternalEventName.ON_PAUSE);
             }
@@ -86,7 +82,6 @@ package com.videojs.vpaid {
             if (playing && paused) {
                 _isPlaying = true;
                 _isPaused = false;
-                _durationTimer.start();
                 _vpaidAd.resumeAd();
                 _model.broadcastEventExternally(ExternalEventName.ON_RESUME);
             }
@@ -98,7 +93,6 @@ package com.videojs.vpaid {
         }
 
         private function onAdStarted(): void {
-            startDurationTimer();
             _model.broadcastEventExternally(ExternalEventName.ON_START)
             _model.broadcastEventExternally(ExternalEventName.ON_VPAID_ADSTARTED);
             _isPlaying = true;
@@ -174,14 +168,6 @@ package com.videojs.vpaid {
 
             // Use stage rect because current ad implementations do not currently provide width/height.
             _vpaidAd.initAd(_model.stageRect.width, _model.stageRect.height, "normal", _model.bitrate, _model.adParameters);
-        }
-
-        private function adDurationComplete(evt: Object): void {
-           if (_durationTimer) {
-                _durationTimer.removeEventListener(TimerEvent.TIMER_COMPLETE, adDurationComplete);
-                _durationTimer = null;
-           }
-           onAdStopped();
         }
     }
 }

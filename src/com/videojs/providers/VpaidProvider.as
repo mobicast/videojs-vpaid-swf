@@ -21,7 +21,7 @@ package com.videojs.providers{
         }
 
         public function get time():Number {
-            return _adContainer.remainingTime;
+            return _adContainer.time;
         }
 
         public function get duration():Number {
