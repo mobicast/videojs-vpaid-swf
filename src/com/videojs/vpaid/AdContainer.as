@@ -1,6 +1,7 @@
 package com.videojs.vpaid {
     
     import com.videojs.*;
+    import com.videojs.structs.ExternalErrorEventName;
     import com.videojs.structs.ExternalEventName;
     import flash.display.Loader;
     import flash.display.Sprite;
@@ -103,6 +104,7 @@ package com.videojs.vpaid {
         }
         
         private function onAdError(): void {
+            _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_ERROR);
             _vpaidAd.stopAd();
         }
         
