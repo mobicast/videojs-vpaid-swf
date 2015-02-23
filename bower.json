@@ -1,11 +1,11 @@
 {
-  "name": "video-js-vpaid",
-  "version": "4.5.1",
+  "name": "videojs-vpaid-swf",
+  "version": "4.5.3",
   "homepage": "https://github.com/guardian/video-js-vpaid",
   "authors": [
     "Richard Nguyen <richard.nguyen@guardian.co.uk>"
   ],
-  "main": "dist/video-js.swf",
+  "main": "dist/video-js-vpaid.swf",
   "moduleType": [
     "globals"
   ],
