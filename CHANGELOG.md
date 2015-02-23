@@ -6,6 +6,12 @@ _(none)_
 
 --------------------
 
+## 4.5.3 (2015-01-22)
+* Paused should be true before a source has been set by default
+
+## 4.5.2 (2014-12-04)
+* Fixed an issue where Flash would crash when switching sources quickly ([view](https://github.com/videojs/video-js-swf/pull/131))
+
 ## 4.5.1 (2014-10-15)
 * Fixed an issue where changing the source immediately after seeking could cause an error ([view](https://github.com/videojs/video-js-swf/pull/125))
 * Added sanitation for all data that might be passed through the external interface ([view](https://github.com/videojs/video-js-swf/pull/127))
@@ -40,4 +46,3 @@ _(none)_
 * Fixed bugs with buffered and duration reporting on non-linear streams ([view](https://github.com/videojs/video-js-swf/pull/80))
 * Added refined seeking for use on non-linear streams ([view](https://github.com/videojs/video-js-swf/pull/80))
 * Extended endOfStream for use with Media Sources API ([view](https://github.com/videojs/video-js-swf/pull/80))
-
