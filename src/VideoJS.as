@@ -11,6 +11,7 @@ package{
     import flash.events.Event;
     import flash.events.MouseEvent;
     import flash.events.TimerEvent;
+    import flash.events.UncaughtErrorEvent;
     import flash.external.ExternalInterface;
     import flash.geom.Rectangle;
     import flash.system.Security;
@@ -39,17 +40,13 @@ package{
             Security.allowDomain("*");
             Security.allowInsecureDomain("*");
 
-            if(loaderInfo.hasOwnProperty("uncaughtErrorEvents")){
-                // we'll want to suppress ANY uncaught debug errors in production (for the sake of ux)
-                // IEventDispatcher(loaderInfo["uncaughtErrorEvents"]).addEventListener("uncaughtError", onUncaughtError);
-            }
             
             if(ExternalInterface.available){
                 registerExternalMethods();
             }
 
             _app = new VideoJSApp();
-            
+
             addChild(_app);
 
             _app.model.stageRect = new Rectangle(0, 0, stage.stageWidth, stage.stageHeight);
@@ -183,7 +180,6 @@ package{
         }
         
         private function onGetPropertyCalled(pPropertyName:String = ""):*{
-
             switch(pPropertyName){
                 case "mode":
                     return _app.model.mode;

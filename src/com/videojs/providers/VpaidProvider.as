@@ -2,6 +2,7 @@ package com.videojs.providers{
 
     import com.videojs.VideoJSModel;
     import com.videojs.vpaid.AdContainer;
+    import flash.external.ExternalInterface;
     import flash.media.Video;
     import flash.utils.ByteArray;
 

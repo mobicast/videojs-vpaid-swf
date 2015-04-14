@@ -72,7 +72,7 @@ module.exports = function (grunt) {
           // `-context-root context-path`
           'contextRoot': null,
           // `-debug=false`
-          'debug': false,
+          'debug': true,
           // `-defaults-css-files filePath1 ...`
           'defaultsCssFiles': [],
           // `-defaults-css-url http://example.com/main.css`
