@@ -1,17 +1,21 @@
 package com.videojs.providers{
 
-    import com.videojs.VideoJSModel;
-    import com.videojs.vpaid.AdContainer;
+    import flash.events.EventDispatcher;
     import flash.external.ExternalInterface;
     import flash.media.Video;
     import flash.utils.ByteArray;
 
-    public class VpaidProvider implements IProvider{
+    import com.videojs.VideoJSModel;
+    import com.videojs.vpaid.AdContainer;
 
-        protected var _adContainer: AdContainer;
+    public class VPAIDProvider extends EventDispatcher implements IProvider{
 
-        public function VpaidProvider(): void {
-            _adContainer = VideoJSModel.getInstance().adContainer;
+        private var _model:VideoJSModel;
+        private var _adContainer:AdContainer;
+
+        public function VPAIDProvider(): void {
+            _model = VideoJSModel.getInstance()
+            _adContainer = _model.adContainer;
         }
 
         public function get loop():Boolean {
@@ -26,11 +30,11 @@ package com.videojs.providers{
         }
 
         public function get duration():Number {
-            return VideoJSModel.getInstance().duration;
+            return _model.duration;
         }
 
         public function set duration(pNumber:Number):void {
-            VideoJSModel.getInstance().duration = pNumber;
+            _model.duration = pNumber;
         }
 
         public function appendBuffer(bytes:ByteArray):void {}
@@ -124,13 +128,16 @@ package com.videojs.providers{
         }
 
         public function resume(): void {
-           _adContainer.resumePlayingAd();
+            _adContainer.resumePlayingAd();
         }
 
         public function seekBySeconds(pTime:Number):void {}
         public function seekByPercent(pPercent:Number):void {}
         public function stop():void {}
         public function attachVideo(pVideo:Video):void {};
+        public function attachAdContainer(pAdContainer:AdContainer):void {
+            _adContainer = pAdContainer;
+        };
         public function die():void {};
     }
 }

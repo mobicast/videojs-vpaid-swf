@@ -213,6 +213,7 @@ module.exports = function (grunt) {
         cmdLineOpts.push(f.dest);
       }
 
+      cmdLineOpts.push('-debug=true');
       cmdLineOpts.push('-define=CONFIG::version, "' + pkg.version + '"');
       cmdLineOpts.push('--');
       cmdLineOpts.push.apply(cmdLineOpts, srcList);

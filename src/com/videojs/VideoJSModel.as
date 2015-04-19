@@ -52,7 +52,7 @@ package com.videojs{
                 throw new Error("Invalid Singleton access.  Use VideoJSModel.getInstance()!");
             }
             else{
-                _mode = PlayerMode.VIDEO;
+                _mode = PlayerMode.VPAID;
                 _currentPlaybackType = PlaybackType.HTTP;
                 _masterVolume = new SoundTransform();
                 _stageRect = new Rectangle(0, 0, 100, 100);
@@ -80,7 +80,7 @@ package com.videojs{
 
         public function set mode(pMode:String):void {
             switch(pMode){
-                case PlayerMode.VIDEO:
+                case PlayerMode.VPAID:
                     _mode = pMode;
                     break;
                 default:
@@ -382,6 +382,8 @@ package com.videojs{
                     var __newArgs:Array = [_jsEventProxyName, ExternalInterface.objectID].concat(__incomingArgs);
                     var __sanitizedArgs:Array = cleanObject(__newArgs);
                     ExternalInterface.call.apply(null, __sanitizedArgs);
+
+                    // ExternalInterface.call("console.debug", "vpaidswf", "event eventually", __sanitizedArgs, (new Error()).getStackTrace());
                 }
             }
         }
@@ -398,6 +400,8 @@ package com.videojs{
                     var __newArgs:Array = [_jsErrorEventProxyName, ExternalInterface.objectID].concat(__incomingArgs);
                     var __sanitizedArgs:Array = cleanObject(__newArgs);
                     ExternalInterface.call.apply(null, __sanitizedArgs);
+
+                    // ExternalInterface.call("console.error", "vpaidswf", "error event", __sanitizedArgs, (new Error()).getStackTrace());
                 }
             }
         }
@@ -512,7 +516,7 @@ package com.videojs{
             } else if (obj is Array) {
                 var __sanitizedArray:Array = new Array();
 
-                for each (var __item in obj){
+                for each (var __item:* in obj){
                     __sanitizedArray.push(cleanObject(__item));
                 }
 
@@ -520,7 +524,7 @@ package com.videojs{
             } else if (typeof(obj) == 'object') {
                 var __sanitizedObject:Object = new Object();
 
-                for (var __i in obj){
+                for (var __i:* in obj){
                     __sanitizedObject[__i] = cleanObject(obj[__i]);
                 }
 
@@ -538,13 +542,14 @@ package com.videojs{
             var __src:Object;
             // We need to determine which provider to load, based on the values of our exposed properties.
             switch(_mode){
-                case PlayerMode.VIDEO:
+                case PlayerMode.VPAID:
 
                     if(_currentPlaybackType == PlaybackType.HTTP){
                         __src = {
                             path: _src
                         };
-                        _provider = new VpaidProvider();
+                        _provider = new VPAIDProvider();
+                        _provider.attachAdContainer(_adContainer);
                         _provider.init(__src, _autoplay);
                     }
 

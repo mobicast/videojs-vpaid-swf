@@ -1,17 +1,23 @@
-package
+package com.videojs.vpaid
 {
+  import flash.external.ExternalInterface;
   import flash.events.EventDispatcher;
   import flash.events.Event;
+  import com.videojs.events.VPAIDEvent;
 
   // Player wrapper for untyped loaded swf
-  public class VPAIDWrapper extends EventDispatcher implements IVPAID
+  public class SafeVPAID extends EventDispatcher
   {
     private var _ad:*;
-    public function VPAIDWrapper(ad:*) {
+    public function SafeVPAID(ad:*) {
       _ad = ad;
     }
+
     // Properties
-    public function get adElement(): * {
+    public function get getVPAID():* {
+      return _ad.hasOwnProperty('getVPAID') ? _ad.getVPAID : _ad;
+    }
+    public function get getWrappedAd():* {
       return _ad;
     }
     public function get adLinear():Boolean {
