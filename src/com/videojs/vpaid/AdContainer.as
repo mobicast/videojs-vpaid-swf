@@ -11,14 +11,14 @@ package com.videojs.vpaid {
   import flash.net.URLRequest;
   import flash.system.LoaderContext;
   import flash.utils.*;
-  import com.videojs.vpaid.SafeVPAID;
+  import com.videojs.vpaid.VPAIDWrapper;
   import com.videojs.events.VPAIDEvent;
 
   public class AdContainer extends Sprite {
 
     private var _model: VideoJSModel;
     private var _src: String;
-    private var _vpaidAd:SafeVPAID;
+    private var _vpaidAd:VPAIDWrapper;
     private var _isPlaying:Boolean = false;
     private var _isPaused:Boolean = true;
     private var _hasEnded:Boolean = false;
@@ -113,7 +113,6 @@ package com.videojs.vpaid {
       try {
         ExternalInterface.call("console.debug", "vpaidcontainer", "startAd");
         _vpaidAd.startAd();
-        _model.broadcastEventExternally(ExternalEventName.ON_VAST_CREATIVE_VIEW);
       } catch(e:Error) {
         ExternalInterface.call("console.error", "vpaidcontainer", "startAd error", e);
         _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_ERROR);
@@ -187,7 +186,7 @@ package com.videojs.vpaid {
     }
 
     private function successfulCreativeLoad(evt: Object): void {
-      _vpaidAd = new SafeVPAID(evt.target.content.getVPAID());
+      _vpaidAd = new VPAIDWrapper(evt.target.content.getVPAID());
 
       var duration:Number = _vpaidAd.adDuration || _vpaidAd.adRemainingTime,
         width:Number = _vpaidAd.adWidth,
@@ -239,7 +238,7 @@ package com.videojs.vpaid {
       }
 
       try {
-        ExternalInterface.call("console.debug", "vpaidcontainer", "initAd", _model.adParameters);
+        ExternalInterface.call("console.debug", "vpaidcontainer", "initAd", _model.bitrate, _model.adParameters);
         // Use stage rect because current ad implementations do not currently provide width/height.
         _vpaidAd.initAd(_model.stageRect.width, _model.stageRect.height, "normal", _model.bitrate, _model.adParameters, "");
       } catch(e:Error){

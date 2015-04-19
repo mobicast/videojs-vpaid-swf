@@ -401,7 +401,7 @@ package com.videojs{
                     var __sanitizedArgs:Array = cleanObject(__newArgs);
                     ExternalInterface.call.apply(null, __sanitizedArgs);
 
-                    // ExternalInterface.call("console.error", "vpaidswf", "error event", __sanitizedArgs, (new Error()).getStackTrace());
+                    ExternalInterface.call("console.error", "vpaidswf", "error event", __sanitizedArgs, (new Error()).getStackTrace());
                 }
             }
         }

@@ -11,17 +11,17 @@ package com.videojs.structs{
         public static const ON_VOLUME_CHANGE:String = "advolumechange";
         public static const ON_STAGE_CLICK:String = "adstageclick";
 
-        public static const ON_VAST_CREATIVE_VIEW:String = "creativeView";
-        public static const ON_VAST_START:String = "start";
-        public static const ON_VAST_FIRST_QUARTILE:String = "firstQuartile";
-        public static const ON_VAST_MIDPOINT:String = "midpoint";
-        public static const ON_VAST_THIRD_QUARTILE:String = "thirdQuartile";
-        public static const ON_VAST_COMPLETE:String = "complete";
-        public static const ON_VAST_RESUME:String = "resume";
-        public static const ON_VAST_PAUSE:String = "pause";
-        public static const ON_VAST_REWIND:String = "rewind";
-        public static const ON_VAST_SKIP:String = "skip";
-        public static const ON_VAST_CLOSE_LINEAR:String = "closeLinear";
-        public static const ON_VAST_CLOSE:String = "close"
+        public static const ON_VAST_CREATIVE_VIEW:String = "vastcreativeview";
+        public static const ON_VAST_START:String = "vaststart";
+        public static const ON_VAST_FIRST_QUARTILE:String = "vastfirstquartile";
+        public static const ON_VAST_MIDPOINT:String = "vastmidpoint";
+        public static const ON_VAST_THIRD_QUARTILE:String = "vastthirdquartile";
+        public static const ON_VAST_COMPLETE:String = "vastcomplete";
+        public static const ON_VAST_RESUME:String = "vastresume";
+        public static const ON_VAST_PAUSE:String = "vastpause";
+        public static const ON_VAST_REWIND:String = "vastrewind";
+        public static const ON_VAST_SKIP:String = "vastskip";
+        public static const ON_VAST_CLOSE_LINEAR:String = "vastcloselinear";
+        public static const ON_VAST_CLOSE:String = "vastclose"
     }
 }

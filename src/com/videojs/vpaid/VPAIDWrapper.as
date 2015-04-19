@@ -6,10 +6,10 @@ package com.videojs.vpaid
   import com.videojs.events.VPAIDEvent;
 
   // Player wrapper for untyped loaded swf
-  public class SafeVPAID extends EventDispatcher
+  public class VPAIDWrapper extends EventDispatcher
   {
     private var _ad:*;
-    public function SafeVPAID(ad:*) {
+    public function VPAIDWrapper(ad:*) {
       _ad = ad;
     }
 
