@@ -17,11 +17,14 @@ package com.videojs.structs{
         public static const ON_VAST_MIDPOINT:String = "vastmidpoint";
         public static const ON_VAST_THIRD_QUARTILE:String = "vastthirdquartile";
         public static const ON_VAST_COMPLETE:String = "vastcomplete";
+        public static const ON_VAST_CLICK_TRACKING:String = "vastclicktracking";
+        public static const ON_VAST_ACCEPT_INVITATION:String = "vastacceptinvitation";
+        public static const ON_VAST_COLLAPSE:String = "vastcollapse";
         public static const ON_VAST_RESUME:String = "vastresume";
         public static const ON_VAST_PAUSE:String = "vastpause";
         public static const ON_VAST_REWIND:String = "vastrewind";
         public static const ON_VAST_SKIP:String = "vastskip";
         public static const ON_VAST_CLOSE_LINEAR:String = "vastcloselinear";
-        public static const ON_VAST_CLOSE:String = "vastclose"
+        public static const ON_VAST_CLOSE:String = "vastclose";
     }
 }

@@ -229,6 +229,36 @@ package com.videojs.vpaid {
             _model.broadcastEventExternally(ExternalEventName.ON_VAST_COMPLETE);
         }
 
+        private function onAdClickThru(evt:Object): void {
+            ExternalInterface.call("console.debug", "vpaidcontainer", 'onAdClickThru');
+            _model.broadcastEventExternally(ExternalEventName.ON_VAST_CLICK_TRACKING);
+        }
+
+        private function onAdUserAcceptInvitation(evt:Object): void {
+            ExternalInterface.call("console.debug", "vpaidcontainer", 'onAdUserAcceptInvitation');
+            _model.broadcastEventExternally(ExternalEventName.ON_VAST_ACCEPT_INVITATION);
+        }
+
+        private function onAdUserMinimize(evt:Object): void {
+            ExternalInterface.call("console.debug", "vpaidcontainer", 'onAdUserMinimize');
+            _model.broadcastEventExternally(ExternalEventName.ON_VAST_COLLAPSE);
+        }
+
+        private function onAdUserClose(evt:Object): void {
+            ExternalInterface.call("console.debug", "vpaidcontainer", 'onAdUserClose');
+            _model.broadcastEventExternally(ExternalEventName.ON_VAST_CLOSE);
+        }
+
+        private function onAdPaused(evt:Object): void {
+            ExternalInterface.call("console.debug", "vpaidcontainer", 'onAdPaused');
+            _model.broadcastEventExternally(ExternalEventName.ON_VAST_PAUSE);
+        }
+
+        private function onAdPlaying(evt:Object): void {
+            ExternalInterface.call("console.debug", "vpaidcontainer", 'onAdPlaying');
+            _model.broadcastEventExternally(ExternalEventName.ON_VAST_RESUME);
+        }
+
         private function onAckTimeout(evt:Object): void {
             ExternalInterface.call("console.debug", "vpaidcontainer", 'ack timeout occured!', evt);
             _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_TIMEOUT);
@@ -351,6 +381,18 @@ package com.videojs.vpaid {
             _vpaidAd.addEventListener(VPAIDEvent.AdVideoThirdQuartile, onAdVideoThirdQuartile);
 
             _vpaidAd.addEventListener(VPAIDEvent.AdVideoComplete, onAdVideoComplete);
+
+            _vpaidAd.addEventListener(VPAIDEvent.AdClickThru, onAdClickThru);
+
+            _vpaidAd.addEventListener(VPAIDEvent.AdUserAcceptInvitation, onAdUserAcceptInvitation);
+
+            _vpaidAd.addEventListener(VPAIDEvent.AdUserMinimize, onAdUserMinimize);
+
+            _vpaidAd.addEventListener(VPAIDEvent.AdUserClose, onAdUserClose);
+
+            _vpaidAd.addEventListener(VPAIDEvent.AdPaused, onAdPaused);
+
+            _vpaidAd.addEventListener(VPAIDEvent.AdPlaying, onAdPlaying);
 
             ExternalInterface.call("console.debug", "vpaidcontainer", 'request handshakeVersion');
 
