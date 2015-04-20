@@ -276,10 +276,13 @@ package com.videojs.vpaid {
         }
 
         private function onAdVolumeChange(evt:Object): void {
-            ExternalInterface.call("console.debug", "vpaidcontainer", 'AdVolumeChange', evt);
+            ExternalInterface.call("console.debug", "vpaidcontainer", 'AdVolumeChange');
+
             if (_vpaidAd.adVolume > 0 && _lastAdVolumne == 0) {
+              ExternalInterface.call("console.debug", "vpaidcontainer", 'unmuted');
                 _model.broadcastEventExternally(ExternalEventName.ON_VAST_UNMUTE);
             } else if (_vpaidAd.adVolume == 0 && _lastAdVolumne > 0) {
+              ExternalInterface.call("console.debug", "vpaidcontainer", 'muted');
                 _model.broadcastEventExternally(ExternalEventName.ON_VAST_MUTE);
             }
 
@@ -293,7 +296,7 @@ package com.videojs.vpaid {
 
         private function onIdleCheck(evt:Object): void {
             if (playing) {
-              ExternalInterface.call("console.debug", "vpaidcontainer", 'idle check: not idle, adDuration: ' + _vpaidAd.adDuration + ', adRemainingTime: ' + _vpaidAd.adRemainingTime);
+              ExternalInterface.call("console.debug", "vpaidcontainer", 'idle check: not idle, adDuration: ' + _vpaidAd.adDuration + ', adRemainingTime: ' + _vpaidAd.adRemainingTime + ', adVolumne: ' + _vpaidAd.adVolume);
               _idleTimer.reset();
               _idleTimer.start();
             } else {
