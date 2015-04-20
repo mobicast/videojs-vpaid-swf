@@ -24,11 +24,14 @@ package com.videojs.vpaid {
         private var _isPaused:Boolean = true;
         private var _hasEnded:Boolean = false;
         private var _loadStarted:Boolean = false;
-        private var _timeoutTimer:Timer = new Timer(15000, 1);
+        private var _ackTimer:Timer = new Timer(20000, 1);
+        private var _idleTimer:Timer = new Timer(3000, 10);
 
         public function AdContainer(model:VideoJSModel){
             _model = model;
-            _timeoutTimer.addEventListener(TimerEvent.TIMER_COMPLETE, onTimeout);
+            _ackTimer.addEventListener(TimerEvent.TIMER_COMPLETE, onAckTimeout);
+            _idleTimer.addEventListener(TimerEvent.TIMER, onIdleCheck);
+            _idleTimer.addEventListener(TimerEvent.TIMER_COMPLETE, onIdleTimeout);
         }
 
         public function get hasActiveAdAsset(): Boolean {
@@ -115,8 +118,8 @@ package com.videojs.vpaid {
                 ExternalInterface.call("console.error", "vpaidcontainer", "Unable to add vpaid to the stage", e);
             }
 
-            _timeoutTimer.reset();
-            _timeoutTimer.start();
+            _ackTimer.reset();
+            _ackTimer.start();
 
             var duration:Number = -2;
 
@@ -141,6 +144,8 @@ package com.videojs.vpaid {
 
             try {
                 ExternalInterface.call("console.debug", "vpaidcontainer", "startAd");
+                _isPlaying = false;
+                _isPaused = false;
                 _vpaidAd.startAd();
             } catch(e:Error) {
                 ExternalInterface.call("console.error", "vpaidcontainer", "startAd error", e);
@@ -150,7 +155,7 @@ package com.videojs.vpaid {
 
         private function onAdStarted(e:Object): void {
             ExternalInterface.call("console.debug", "vpaidcontainer", 'AdStarted');
-            _timeoutTimer.reset();
+            _ackTimer.reset();
 
             _isPlaying = true;
             _isPaused = false;
@@ -159,7 +164,7 @@ package com.videojs.vpaid {
         }
 
         private function onAdError(e:Object): void {
-            _timeoutTimer.reset();
+            _ackTimer.reset();
 
             ExternalInterface.call("console.error", "vpaidcontainer", "VPAID::AdError", e);
             _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_ERROR);
@@ -168,7 +173,7 @@ package com.videojs.vpaid {
 
         private function onAdStopped(e:Object): void {
             ExternalInterface.call("console.debug", "vpaidcontainer", 'AdStopped');
-            _timeoutTimer.reset();
+            _ackTimer.reset();
 
             if (_hasEnded) {
                 ExternalInterface.call("console.warn", "vpaidcontainer", "onAdStopped", "AdStopped called even though the VPAID has already ended!");
@@ -205,6 +210,7 @@ package com.videojs.vpaid {
 
         private function onAdVideoFirstQuartile(evt:Object): void {
             ExternalInterface.call("console.debug", "vpaidcontainer", 'AdVideoFirstQuartile');
+            onAdDurationChange(evt);
             _model.broadcastEventExternally(ExternalEventName.ON_VAST_FIRST_QUARTILE);
         }
 
@@ -223,14 +229,32 @@ package com.videojs.vpaid {
             _model.broadcastEventExternally(ExternalEventName.ON_VAST_COMPLETE);
         }
 
-        private function onTimeout(evt:Object): void {
-            ExternalInterface.call("console.debug", "vpaidcontainer", 'timeout occured!', evt);
+        private function onAckTimeout(evt:Object): void {
+            ExternalInterface.call("console.debug", "vpaidcontainer", 'ack timeout occured!', evt);
+            _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_TIMEOUT);
+        }
+
+        private function onIdleCheck(evt:Object): void {
+            if (playing) {
+              ExternalInterface.call("console.debug", "vpaidcontainer", 'idle check: not idle, adDuration: ' + _vpaidAd.adDuration + ', adRemainingTime: ' + _vpaidAd.adRemainingTime);
+              _idleTimer.reset();
+              _idleTimer.start();
+            } else {
+              ExternalInterface.call("console.debug", "vpaidcontainer", 'idle check: IDLE, ticks: ' + _idleTimer.currentCount + '/' + _idleTimer.repeatCount);
+            }
+        }
+
+        private function onIdleTimeout(evt:Object): void {
+            ExternalInterface.call("console.debug", "vpaidcontainer", 'idle timeout occured!', evt);
             _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_TIMEOUT);
         }
 
         public function loadAdAsset(): void {
-            _timeoutTimer.reset();
-            _timeoutTimer.start();
+            _idleTimer.reset();
+            _idleTimer.start();
+
+            _ackTimer.reset();
+            _ackTimer.start();
 
             _loadStarted = true;
             var loader:Loader = new Loader();
@@ -255,8 +279,8 @@ package com.videojs.vpaid {
         }
 
         private function successfulCreativeLoad(evt: Object): void {
-            _timeoutTimer.reset();
-            _timeoutTimer.start();
+            _ackTimer.reset();
+            _ackTimer.start();
 
             try {
                 _displayObject = evt.target.content;
