@@ -1,5 +1,6 @@
 package com.videojs.vpaid
 {
+  import flash.display.DisplayObject;
   import flash.external.ExternalInterface;
   import flash.events.EventDispatcher;
   import flash.events.Event;
@@ -14,12 +15,6 @@ package com.videojs.vpaid
     }
 
     // Properties
-    public function get getVPAID():* {
-      return _ad.hasOwnProperty('getVPAID') ? _ad.getVPAID : _ad;
-    }
-    public function get getWrappedAd():* {
-      return _ad;
-    }
     public function get adLinear():Boolean {
       return _ad.adLinear;
     }
@@ -27,7 +22,7 @@ package com.videojs.vpaid
       return _ad.adExpanded;
     }
     public function get adRemainingTime():Number {
-      return _ad.adRemainingTime;
+      return _ad.hasOwnProperty("adRemainingTime") ? _ad.adRemainingTime : -1;
     }
     public function get adVolume():Number {
       return _ad.adVolume;
@@ -44,7 +39,7 @@ package com.videojs.vpaid
       return _ad.hasOwnProperty("adHeight") ? _ad.adHeight: 0;
     }
     public function get adDuration():Number {
-      return _ad.hasOwnProperty("adDuration") ? _ad.adDuration : 0;
+      return _ad.hasOwnProperty("adDuration") ? _ad.adDuration : -1;
     }
 
     // Methods

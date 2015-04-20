@@ -9,6 +9,7 @@ package com.videojs{
     import com.videojs.structs.PlayerMode;
     import com.videojs.vpaid.AdContainer;
 
+    import flash.display.DisplayObject;
     import flash.events.Event;
     import flash.events.EventDispatcher;
     import flash.external.ExternalInterface;
@@ -401,7 +402,7 @@ package com.videojs{
                     var __sanitizedArgs:Array = cleanObject(__newArgs);
                     ExternalInterface.call.apply(null, __sanitizedArgs);
 
-                    ExternalInterface.call("console.error", "vpaidswf", "error event", __sanitizedArgs, (new Error()).getStackTrace());
+                    // ExternalInterface.call("console.error", "vpaidswf", "error event", __sanitizedArgs, (new Error()).getStackTrace());
                 }
             }
         }
