@@ -383,8 +383,6 @@ package com.videojs{
                     var __newArgs:Array = [_jsEventProxyName, ExternalInterface.objectID].concat(__incomingArgs);
                     var __sanitizedArgs:Array = cleanObject(__newArgs);
                     ExternalInterface.call.apply(null, __sanitizedArgs);
-
-                    // ExternalInterface.call("console.debug", "vpaidswf", "event eventually", __sanitizedArgs, (new Error()).getStackTrace());
                 }
             }
         }
@@ -401,8 +399,6 @@ package com.videojs{
                     var __newArgs:Array = [_jsErrorEventProxyName, ExternalInterface.objectID].concat(__incomingArgs);
                     var __sanitizedArgs:Array = cleanObject(__newArgs);
                     ExternalInterface.call.apply(null, __sanitizedArgs);
-
-                    // ExternalInterface.call("console.error", "vpaidswf", "error event", __sanitizedArgs, (new Error()).getStackTrace());
                 }
             }
         }
