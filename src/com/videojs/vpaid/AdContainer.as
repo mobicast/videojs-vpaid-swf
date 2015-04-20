@@ -197,7 +197,7 @@ package com.videojs.vpaid {
 
         private function onAdLog(evt:Object): void {
             //logType('log', evt);
-            ExternalInterface.call("console.log", "vpaidcontainer", "AdLog", evt.data ? evt.data.message : "");
+            ExternalInterface.call("console.log", "vpaidcontainer", "AdLog", String(evt));
         }
 
         private function onAdDurationChange(evt:Object): void {
@@ -207,7 +207,7 @@ package com.videojs.vpaid {
                 _model.duration = duration;
             }
 
-            ExternalInterface.call("console.debug", "vpaidcontainer", 'adDuration: ', duration, ", model duration: ", _model.duration);
+            ExternalInterface.call("console.debug", "vpaidcontainer", 'adDuration: ' + duration + ", model duration: " + _model.duration);
         }
 
         private function onAdImpression(evt:Object): void {
@@ -308,7 +308,7 @@ package com.videojs.vpaid {
         }
 
         private function onIdleTimeout(evt:Object): void {
-            ExternalInterface.call("console.debug", "vpaidcontainer", 'idle timeout occured!', evt);
+            ExternalInterface.call("console.debug", "vpaidcontainer", 'idle timeout occured!', String(evt));
             _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_TIMEOUT);
         }
 
@@ -349,7 +349,7 @@ package com.videojs.vpaid {
                 _displayObject = evt.target.content;
                 //logType('displayobject', _displayObject);
             } catch(e:Error) {
-                ExternalInterface.call("console.error", "vpaidcontainer", "unable to set display object", e);
+                ExternalInterface.call("console.error", "vpaidcontainer", "unable to set display object", String(e));
                 _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_ERROR);
                 return;
             }
@@ -371,7 +371,7 @@ package com.videojs.vpaid {
                 width = _vpaidAd.adWidth;
                 ExternalInterface.call("console.debug", "vpaidcontainer", 'adWidth', width);
             } catch(e:Error) {
-                ExternalInterface.call("console.error", "vpaidcontainer", "unable get adWidth", e);
+                ExternalInterface.call("console.error", "vpaidcontainer", "unable get adWidth", String(e));
             }
 
             if (!isNaN(width) && width > 0) {
@@ -384,7 +384,7 @@ package com.videojs.vpaid {
                 height = _vpaidAd.adHeight;
                 ExternalInterface.call("console.debug", "vpaidcontainer", 'adHeight', height);
             } catch(e:Error) {
-                ExternalInterface.call("console.error", "vpaidcontainer", "unable get adHeight", e);
+                ExternalInterface.call("console.error", "vpaidcontainer", "unable get adHeight", String(e));
             }
 
             if (!isNaN(height) && height > 0) {
@@ -441,17 +441,17 @@ package com.videojs.vpaid {
                 try {
                     ExternalInterface.call("console.debug", "vpaidcontainer", "adLinear", _vpaidAd.adLinear);
                 } catch(e:Error){
-                    ExternalInterface.call("console.error", "vpaidcontainer", "adLinear error", e);
+                    ExternalInterface.call("console.error", "vpaidcontainer", "adLinear error", String(e));
                     _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_ERROR);
                 }
             }
 
             try {
-                ExternalInterface.call("console.debug", "vpaidcontainer", "initAd", _model.bitrate, _model.adParameters);
+                ExternalInterface.call("console.debug", "vpaidcontainer", "initAd", String(_model.bitrate), String(_model.adParameters));
                 // Use stage rect because current ad implementations do not currently provide width/height.
                 _vpaidAd.initAd(_model.stageRect.width, _model.stageRect.height, "normal", _model.bitrate, _model.adParameters, "");
             } catch(e:Error){
-                ExternalInterface.call("console.error", "vpaidcontainer", "initAd error", e);
+                ExternalInterface.call("console.error", "vpaidcontainer", "initAd error", String(e));
                 _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_ERROR);
             }
         }
