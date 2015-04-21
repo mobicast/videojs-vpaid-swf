@@ -382,6 +382,7 @@ package com.videojs{
                     var __incomingArgs:* = args as Array;
                     var __newArgs:Array = [_jsEventProxyName, ExternalInterface.objectID].concat(__incomingArgs);
                     var __sanitizedArgs:Array = cleanObject(__newArgs);
+                    // ExternalInterface.call("console.info", "vpaidmodel", 'broadcastEventExternally', String(__sanitizedArgs));
                     ExternalInterface.call.apply(null, __sanitizedArgs);
                 }
             }
@@ -398,6 +399,7 @@ package com.videojs{
                     var __incomingArgs:* = args as Array;
                     var __newArgs:Array = [_jsErrorEventProxyName, ExternalInterface.objectID].concat(__incomingArgs);
                     var __sanitizedArgs:Array = cleanObject(__newArgs);
+                    // ExternalInterface.call("console.info", "vpaidmodel", 'broadcastErrorEventExternally', String(__sanitizedArgs));
                     ExternalInterface.call.apply(null, __sanitizedArgs);
                 }
             }
