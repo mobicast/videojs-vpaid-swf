@@ -275,9 +275,7 @@ package com.videojs.vpaid {
             _model.broadcastEventExternally(ExternalEventName.ON_VAST_RESUME);
         }
 
-        private function onAdVolumeChange(evt:Object): void {
-            ExternalInterface.call("console.info", "vpaidcontainer", 'AdVolumeChange');
-
+        private function updateVolumnChange(evt:Object): void {
             if (_vpaidAd.adVolume > 0 && _lastAdVolumne == 0) {
               ExternalInterface.call("console.info", "vpaidcontainer", 'unmuted');
                 _model.broadcastEventExternally(ExternalEventName.ON_VAST_UNMUTE);
@@ -289,13 +287,24 @@ package com.videojs.vpaid {
             _lastAdVolumne = _vpaidAd.adVolume;
         }
 
+        private function onAdVolumeChange(evt:Object): void {
+            ExternalInterface.call("console.info", "vpaidcontainer", 'AdVolumeChange');
+            updateVolumnChange(evt);
+        }
+
         private function onAckTimeout(evt:Object): void {
-            ExternalInterface.call("console.info", "vpaidcontainer", 'ack timeout occured!', String(evt));
-            _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_TIMEOUT);
+            if (_vpaidAd) {
+                ExternalInterface.call("console.warn", "vpaidcontainer", 'ack timeout occured, but noop as VPAID has stopped!', String(evt));
+            } else {
+                ExternalInterface.call("console.info", "vpaidcontainer", 'ack timeout occured!', String(evt));
+                _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_TIMEOUT);
+            }
         }
 
         private function onIdleCheck(evt:Object): void {
-            if (playing) {
+            if (!_vpaidAd) {
+                ExternalInterface.call("console.warn", "vpaidcontainer", 'idle check: noop, VPAID has stopped!');
+            } else if (playing) {
               ExternalInterface.call("console.info", "vpaidcontainer", 'idle check: not idle, adDuration: ' + _vpaidAd.adDuration + ', adRemainingTime: ' + _vpaidAd.adRemainingTime + ', adVolumne: ' + _vpaidAd.adVolume);
               _idleTimer.reset();
               _idleTimer.start();
@@ -304,12 +313,16 @@ package com.videojs.vpaid {
             }
 
             // piggyback volume check
-            onAdVolumeChange(evt);
+            updateVolumnChange(evt);
         }
 
         private function onIdleTimeout(evt:Object): void {
-            ExternalInterface.call("console.info", "vpaidcontainer", 'idle timeout occured!', String(evt));
-            _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_TIMEOUT);
+            if (!_vpaidAd) {
+                ExternalInterface.call("console.warn", "vpaidcontainer", 'idle timeout occured, but noop as VPAID has stopped!', String(evt));
+            } else {
+                ExternalInterface.call("console.info", "vpaidcontainer", 'idle timeout occured!', String(evt));
+                _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_TIMEOUT);
+            }
         }
 
         public function loadAdAsset(): void {
