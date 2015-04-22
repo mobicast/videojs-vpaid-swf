@@ -151,9 +151,10 @@ package com.videojs.vpaid {
             }
 
             try {
-                ExternalInterface.call("console.info", "vpaidcontainer", "startAd");
+                ExternalInterface.call("console.info", "vpaidcontainer", "startAd", "volume: " + _model.volume);
                 _isPlaying = false;
                 _isPaused = false;
+                _vpaidAd.adVolume = _model.volume;
                 _vpaidAd.startAd();
             } catch(e:Error) {
                 ExternalInterface.call("console.error", "vpaidcontainer", "startAd error", String(e));

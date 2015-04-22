@@ -96,6 +96,10 @@ package{
 
         private function finish():void{
 
+            if (loaderInfo.parameters.muted != undefined && loaderInfo.parameters.muted == "true") {
+                _app.model.volume = 0;
+            }
+
             if(loaderInfo.parameters.mode != undefined){
                 _app.model.mode = loaderInfo.parameters.mode;
             }
