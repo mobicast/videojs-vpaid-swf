@@ -53,12 +53,12 @@ package{
 
             // add content-menu version info
 
-            var _ctxVersion:ContextMenuItem = new ContextMenuItem("VideoJS Flash Component v" + VERSION, false, false);
-            var _ctxAbout:ContextMenuItem = new ContextMenuItem("Copyright © 2014 Brightcove, Inc.", false, false);
-            var _ctxMenu:ContextMenu = new ContextMenu();
-            _ctxMenu.hideBuiltInItems();
-            _ctxMenu.customItems.push(_ctxVersion, _ctxAbout);
-            this.contextMenu = _ctxMenu;
+            // var _ctxVersion:ContextMenuItem = new ContextMenuItem("VideoJS Flash Component v" + VERSION, false, false);
+            // var _ctxAbout:ContextMenuItem = new ContextMenuItem("Copyright © 2014 Brightcove, Inc.", false, false);
+            // var _ctxMenu:ContextMenu = new ContextMenu();
+            // _ctxMenu.hideBuiltInItems();
+            // _ctxMenu.customItems.push(_ctxVersion, _ctxAbout);
+            // this.contextMenu = _ctxMenu;
         }
 
         private function registerExternalMethods():void{
