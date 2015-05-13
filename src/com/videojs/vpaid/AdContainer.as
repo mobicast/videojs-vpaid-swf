@@ -25,7 +25,7 @@ package com.videojs.vpaid {
         private var _hasEnded:Boolean = false;
         private var _loadStarted:Boolean = false;
         private var _ackTimer:Timer = new Timer(20000, 1);
-        private var _idleTimer:Timer = new Timer(3000, 10);
+        private var _idleTimer:Timer = new Timer(3000, 5);
         private var _lastAdVolumne:Number;
 
         public function AdContainer(model:VideoJSModel){
@@ -175,9 +175,14 @@ package com.videojs.vpaid {
         private function onAdError(e:Object): void {
             _ackTimer.reset();
 
-            ExternalInterface.call("console.error", "vpaidcontainer", "VPAID::AdError", String(e));
-            _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_ERROR);
+            _isPlaying = false;
+            _isPaused = false;
+            _hasEnded = true;
+            _vpaidAd = null;
             _vpaidAd.stopAd();
+            _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_ERROR);
+
+            ExternalInterface.call("console.error", "vpaidcontainer", "VPAID::AdError", e);
         }
 
         private function onAdStopped(e:Object): void {
@@ -197,7 +202,6 @@ package com.videojs.vpaid {
         }
 
         private function onAdLog(evt:Object): void {
-            //logType('log', evt);
             ExternalInterface.call("console.log", "vpaidcontainer", "AdLog", String(evt));
         }
 
@@ -298,13 +302,16 @@ package com.videojs.vpaid {
                 ExternalInterface.call("console.warn", "vpaidcontainer", 'ack timeout occured, but noop as VPAID has stopped!', String(evt));
             } else {
                 ExternalInterface.call("console.info", "vpaidcontainer", 'ack timeout occured!', String(evt));
-                _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_TIMEOUT);
             }
+
+            _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_TIMEOUT);
         }
 
         private function onIdleCheck(evt:Object): void {
             if (!_vpaidAd) {
                 ExternalInterface.call("console.warn", "vpaidcontainer", 'idle check: noop, VPAID has stopped!');
+                _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_TIMEOUT);
+                return;
             } else if (playing) {
               ExternalInterface.call("console.info", "vpaidcontainer", 'idle check: not idle, adDuration: ' + _vpaidAd.adDuration + ', adRemainingTime: ' + _vpaidAd.adRemainingTime + ', adVolumne: ' + _vpaidAd.adVolume);
               _idleTimer.reset();
@@ -318,9 +325,14 @@ package com.videojs.vpaid {
         }
 
         private function onIdleTimeout(evt:Object): void {
+            _isPlaying = false;
+            _isPaused = false;
+            _hasEnded = true;
+
             if (!_vpaidAd) {
                 ExternalInterface.call("console.warn", "vpaidcontainer", 'idle timeout occured, but noop as VPAID has stopped!', String(evt));
             } else {
+                _vpaidAd = null;
                 ExternalInterface.call("console.info", "vpaidcontainer", 'idle timeout occured!', String(evt));
                 _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_TIMEOUT);
             }
@@ -350,18 +362,12 @@ package com.videojs.vpaid {
             loader.load(new URLRequest(_src), loaderContext);
         }
 
-        private static function logType(objLabel:String, obj:*) {
-            var info:String = describeType(obj);
-            ExternalInterface.call("console.info", "vpaidcontainer", "logType", String(objLabel), String(info));
-        }
-
         private function successfulCreativeLoad(evt: Object): void {
             _ackTimer.reset();
             _ackTimer.start();
 
             try {
                 _displayObject = evt.target.content;
-                //logType('displayobject', _displayObject);
             } catch(e:Error) {
                 ExternalInterface.call("console.error", "vpaidcontainer", "unable to set display object", String(e));
                 _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_ERROR);
@@ -370,8 +376,6 @@ package com.videojs.vpaid {
 
             try {
                 var _ad:* = evt.target.content.getVPAID();
-                //logType('vpaidObj', _ad);
-
                 _vpaidAd = new VPAIDWrapper(_ad);
             } catch(e:Error) {
                 ExternalInterface.call("console.error", "vpaidcontainer", "unable to set VPAID wrapper", String(e));
@@ -461,7 +465,8 @@ package com.videojs.vpaid {
             }
 
             try {
-                ExternalInterface.call("console.info", "vpaidcontainer", "initAd", String(_model.bitrate), String(_model.adParameters));
+                // ExternalInterface.call("console.info", "vpaidcontainer", "initAd", String(_model.bitrate), JSON.stringify(_model.adParameters));
+                ExternalInterface.call("console.info", "vpaidcontainer", "initAd", String(_model.bitrate));
                 // Use stage rect because current ad implementations do not currently provide width/height.
                 _vpaidAd.initAd(_model.stageRect.width, _model.stageRect.height, "normal", _model.bitrate, _model.adParameters, "");
             } catch(e:Error){

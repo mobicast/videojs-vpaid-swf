@@ -14,7 +14,7 @@ package com.videojs.providers{
         private var _adContainer:AdContainer;
 
         public function VPAIDProvider(): void {
-            _model = VideoJSModel.getInstance()
+            _model = VideoJSModel.getInstance();
             _adContainer = _model.adContainer;
         }
 
