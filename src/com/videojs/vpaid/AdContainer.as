@@ -299,9 +299,9 @@ package com.videojs.vpaid {
 
         private function onAckTimeout(evt:Object): void {
             if (_vpaidAd) {
-                ExternalInterface.call("console.warn", "vpaidcontainer", 'ack timeout occured, but noop as VPAID has stopped!', String(evt));
+                ExternalInterface.call("console.warn", "vpaidcontainer", 'ack timeout occured, but noop as VPAID has stopped!');
             } else {
-                ExternalInterface.call("console.info", "vpaidcontainer", 'ack timeout occured!', String(evt));
+                ExternalInterface.call("console.info", "vpaidcontainer", 'ack timeout occured!');
             }
 
             _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_TIMEOUT);
@@ -330,10 +330,10 @@ package com.videojs.vpaid {
             _hasEnded = true;
 
             if (!_vpaidAd) {
-                ExternalInterface.call("console.warn", "vpaidcontainer", 'idle timeout occured, but noop as VPAID has stopped!', String(evt));
+                ExternalInterface.call("console.warn", "vpaidcontainer", 'idle timeout occured, but noop as VPAID has stopped!');
             } else {
                 _vpaidAd = null;
-                ExternalInterface.call("console.info", "vpaidcontainer", 'idle timeout occured!', String(evt));
+                ExternalInterface.call("console.info", "vpaidcontainer", 'idle timeout occured!');
                 _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_TIMEOUT);
             }
         }
@@ -369,7 +369,7 @@ package com.videojs.vpaid {
             try {
                 _displayObject = evt.target.content;
             } catch(e:Error) {
-                ExternalInterface.call("console.error", "vpaidcontainer", "unable to set display object", String(e));
+                ExternalInterface.call("console.error", "vpaidcontainer", "unable to set display object");
                 _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_ERROR);
                 return;
             }
@@ -378,7 +378,7 @@ package com.videojs.vpaid {
                 var _ad:* = evt.target.content.getVPAID();
                 _vpaidAd = new VPAIDWrapper(_ad);
             } catch(e:Error) {
-                ExternalInterface.call("console.error", "vpaidcontainer", "unable to set VPAID wrapper", String(e));
+                ExternalInterface.call("console.error", "vpaidcontainer", "unable to set VPAID wrapper");
                 _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_ERROR);
                 return;
             }
@@ -389,7 +389,7 @@ package com.videojs.vpaid {
                 width = _vpaidAd.adWidth;
                 ExternalInterface.call("console.info", "vpaidcontainer", 'adWidth', width);
             } catch(e:Error) {
-                ExternalInterface.call("console.error", "vpaidcontainer", "unable get adWidth", String(e));
+                ExternalInterface.call("console.error", "vpaidcontainer", "unable get adWidth");
             }
 
             if (!isNaN(width) && width > 0) {
@@ -402,7 +402,7 @@ package com.videojs.vpaid {
                 height = _vpaidAd.adHeight;
                 ExternalInterface.call("console.info", "vpaidcontainer", 'adHeight', height);
             } catch(e:Error) {
-                ExternalInterface.call("console.error", "vpaidcontainer", "unable get adHeight", String(e));
+                ExternalInterface.call("console.error", "vpaidcontainer", "unable get adHeight");
             }
 
             if (!isNaN(height) && height > 0) {
@@ -449,20 +449,18 @@ package com.videojs.vpaid {
 
             _vpaidAd.addEventListener(VPAIDEvent.AdVolumeChange, onAdVolumeChange);
 
-            ExternalInterface.call("console.info", "vpaidcontainer", 'request handshakeVersion');
-
             var ver:String = _vpaidAd.handshakeVersion("2.0");
 
             ExternalInterface.call("console.info", "vpaidcontainer", "handshakeVersion", ver);
 
-            if (ver.indexOf("1.") == 0) {
+            /*if (ver.indexOf("1.") == 0) {
                 try {
                     ExternalInterface.call("console.info", "vpaidcontainer", "adLinear", _vpaidAd.adLinear);
                 } catch(e:Error){
-                    ExternalInterface.call("console.error", "vpaidcontainer", "adLinear error", String(e));
+                    ExternalInterface.call("console.error", "vpaidcontainer", "adLinear error");
                     _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_ERROR);
                 }
-            }
+            }*/
 
             try {
                 // ExternalInterface.call("console.info", "vpaidcontainer", "initAd", String(_model.bitrate), JSON.stringify(_model.adParameters));
@@ -470,7 +468,7 @@ package com.videojs.vpaid {
                 // Use stage rect because current ad implementations do not currently provide width/height.
                 _vpaidAd.initAd(_model.stageRect.width, _model.stageRect.height, "normal", _model.bitrate, _model.adParameters, "");
             } catch(e:Error){
-                ExternalInterface.call("console.error", "vpaidcontainer", "initAd error", String(e));
+                ExternalInterface.call("console.error", "vpaidcontainer", "initAd error");
                 _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_ERROR);
             }
         }
