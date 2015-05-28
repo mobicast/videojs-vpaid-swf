@@ -106,12 +106,12 @@ package com.videojs.vpaid {
             }
         }
 
-        private function onAdSkipped(): void {
+        private function onAdSkipped(evt: Object): void {
             ExternalInterface.call("console.info", "vpaidcontainer", 'AdSkipped');
             _model.broadcastEventExternally(ExternalEventName.ON_VAST_SKIP);
         }
 
-        private function onAdLoaded(): void {
+        private function onAdLoaded(evt: Object): void {
             ExternalInterface.call("console.info", "vpaidcontainer", 'AdLoaded');
             try {
                 addChild(_displayObject);
@@ -162,7 +162,7 @@ package com.videojs.vpaid {
             }
         }
 
-        private function onAdStarted(): void {
+        private function onAdStarted(evt: Object): void {
             ExternalInterface.call("console.info", "vpaidcontainer", 'AdStarted');
             _ackTimer.reset();
 
@@ -185,7 +185,7 @@ package com.videojs.vpaid {
             ExternalInterface.call("console.error", "vpaidcontainer", "VPAID::AdError", e);
         }
 
-        private function onAdStopped(): void {
+        private function onAdStopped(evt: Object): void {
             ExternalInterface.call("console.info", "vpaidcontainer", 'AdStopped');
             _ackTimer.reset();
 
@@ -201,11 +201,11 @@ package com.videojs.vpaid {
             _model.broadcastEventExternally(ExternalEventName.ON_PLAYBACK_COMPLETE);
         }
 
-        private function onAdLog(): void {
+        private function onAdLog(evt: Object): void {
             ExternalInterface.call("console.log", "vpaidcontainer", "AdLog");
         }
 
-        private function onAdDurationChange(): void {
+        private function onAdDurationChange(evt: Object): void {
             ExternalInterface.call("console.info", "vpaidcontainer", 'AdDurationChange');
             var duration:Number = _vpaidAd.adDuration;
             if (!isNaN(duration) && duration > 0) {
@@ -215,72 +215,72 @@ package com.videojs.vpaid {
             ExternalInterface.call("console.info", "vpaidcontainer", 'adDuration: ' + duration + ", model duration: " + _model.duration);
         }
 
-        private function onAdImpression(): void {
+        private function onAdImpression(evt: Object): void {
             ExternalInterface.call("console.info", "vpaidcontainer", 'AdImpression');
             _model.broadcastEventExternally(ExternalEventName.ON_VAST_IMPRESSION);
         }
 
-        private function onAdVideoStart(): void {
+        private function onAdVideoStart(evt: Object): void {
             ExternalInterface.call("console.info", "vpaidcontainer", 'AdVideoStart');
-            onAdDurationChange();
+            onAdDurationChange(evt);
             _model.broadcastEventExternally(ExternalEventName.ON_VAST_START);
         }
 
-        private function onAdVideoFirstQuartile(): void {
+        private function onAdVideoFirstQuartile(evt: Object): void {
             ExternalInterface.call("console.info", "vpaidcontainer", 'AdVideoFirstQuartile');
-            onAdDurationChange();
+            onAdDurationChange(evt);
             _model.broadcastEventExternally(ExternalEventName.ON_VAST_FIRST_QUARTILE);
         }
 
-        private function onAdVideoMidpoint(): void {
+        private function onAdVideoMidpoint(evt: Object): void {
             ExternalInterface.call("console.info", "vpaidcontainer", 'AdVideoMidpoint');
-            onAdDurationChange();
+            onAdDurationChange(evt);
             _model.broadcastEventExternally(ExternalEventName.ON_VAST_MIDPOINT);
         }
 
-        private function onAdVideoThirdQuartile(): void {
+        private function onAdVideoThirdQuartile(evt: Object): void {
             ExternalInterface.call("console.info", "vpaidcontainer", 'AdVideoThirdQuartile');
-            onAdDurationChange();
+            onAdDurationChange(evt);
             _model.broadcastEventExternally(ExternalEventName.ON_VAST_THIRD_QUARTILE);
         }
 
-        private function onAdVideoComplete(): void {
+        private function onAdVideoComplete(evt: Object): void {
             ExternalInterface.call("console.info", "vpaidcontainer", 'AdVideoComplete');
-            onAdDurationChange();
+            onAdDurationChange(evt);
             _model.broadcastEventExternally(ExternalEventName.ON_VAST_COMPLETE);
         }
 
-        private function onAdClickThru(): void {
+        private function onAdClickThru(evt: Object): void {
             ExternalInterface.call("console.info", "vpaidcontainer", 'AdClickThru');
             _model.broadcastEventExternally(ExternalEventName.ON_VAST_CLICK_TRACKING);
         }
 
-        private function onAdUserAcceptInvitation(): void {
+        private function onAdUserAcceptInvitation(evt: Object): void {
             ExternalInterface.call("console.info", "vpaidcontainer", 'AdUserAcceptInvitation');
             _model.broadcastEventExternally(ExternalEventName.ON_VAST_ACCEPT_INVITATION);
         }
 
-        private function onAdUserMinimize(): void {
+        private function onAdUserMinimize(evt: Object): void {
             ExternalInterface.call("console.info", "vpaidcontainer", 'AdUserMinimize');
             _model.broadcastEventExternally(ExternalEventName.ON_VAST_COLLAPSE);
         }
 
-        private function onAdUserClose(): void {
+        private function onAdUserClose(evt: Object): void {
             ExternalInterface.call("console.info", "vpaidcontainer", 'AdUserClose');
             _model.broadcastEventExternally(ExternalEventName.ON_VAST_CLOSE);
         }
 
-        private function onAdPaused(): void {
+        private function onAdPaused(evt: Object): void {
             ExternalInterface.call("console.info", "vpaidcontainer", 'AdPaused');
             _model.broadcastEventExternally(ExternalEventName.ON_VAST_PAUSE);
         }
 
-        private function onAdPlaying(): void {
+        private function onAdPlaying(evt: Object): void {
             ExternalInterface.call("console.info", "vpaidcontainer", 'AdPlaying');
             _model.broadcastEventExternally(ExternalEventName.ON_VAST_RESUME);
         }
 
-        private function updateVolumnChange(): void {
+        private function updateVolumnChange(evt: Object): void {
             if (_vpaidAd.adVolume > 0 && _lastAdVolumne == 0) {
               ExternalInterface.call("console.info", "vpaidcontainer", 'unmuted');
                 _model.broadcastEventExternally(ExternalEventName.ON_VAST_UNMUTE);
@@ -292,12 +292,12 @@ package com.videojs.vpaid {
             _lastAdVolumne = _vpaidAd.adVolume;
         }
 
-        private function onAdVolumeChange(): void {
+        private function onAdVolumeChange(evt: Object): void {
             ExternalInterface.call("console.info", "vpaidcontainer", 'AdVolumeChange');
-            updateVolumnChange();
+            updateVolumnChange(evt);
         }
 
-        private function onAckTimeout(): void {
+        private function onAckTimeout(evt: Object): void {
             if (_vpaidAd) {
                 ExternalInterface.call("console.warn", "vpaidcontainer", 'ack timeout occured, but noop as VPAID has stopped!');
             } else {
@@ -307,7 +307,7 @@ package com.videojs.vpaid {
             _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_TIMEOUT);
         }
 
-        private function onIdleCheck(): void {
+        private function onIdleCheck(evt: Object): void {
             if (!_vpaidAd) {
                 ExternalInterface.call("console.warn", "vpaidcontainer", 'idle check: noop, VPAID has stopped!');
                 _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_TIMEOUT);
@@ -321,10 +321,10 @@ package com.videojs.vpaid {
             }
 
             // piggyback volume check
-            updateVolumnChange();
+            updateVolumnChange(evt);
         }
 
-        private function onIdleTimeout(): void {
+        private function onIdleTimeout(evt: Object): void {
             _isPlaying = false;
             _isPaused = false;
             _hasEnded = true;
