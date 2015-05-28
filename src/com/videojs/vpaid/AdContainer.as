@@ -116,7 +116,7 @@ package com.videojs.vpaid {
             try {
                 addChild(_displayObject);
             } catch(e:Error) {
-                ExternalInterface.call("console.error", "vpaidcontainer", "Unable to add vpaid to the stage", String(e));
+                ExternalInterface.call("console.error", "vpaidcontainer", "Unable to add vpaid to the stage");
             }
 
             _ackTimer.reset();
@@ -127,7 +127,7 @@ package com.videojs.vpaid {
             try {
                 duration = _vpaidAd.adDuration;
             } catch(e:Error) {
-                ExternalInterface.call("console.error", "vpaidcontainer", "unable get adDuration", String(e));
+                ExternalInterface.call("console.error", "vpaidcontainer", "unable get adDuration");
             }
 
             if (duration <= 0) {
@@ -135,7 +135,7 @@ package com.videojs.vpaid {
                     duration = _vpaidAd.adRemainingTime;
                     ExternalInterface.call("console.info", "vpaidcontainer", 'adRemainingTime', String(duration));
                 } catch(e:Error) {
-                    ExternalInterface.call("console.error", "vpaidcontainer", "unable get adRemainingTime", String(e));
+                    ExternalInterface.call("console.error", "vpaidcontainer", "unable get adRemainingTime");
                 }
             }
 
@@ -147,7 +147,7 @@ package com.videojs.vpaid {
                 _lastAdVolumne = _vpaidAd.adVolume;
                 ExternalInterface.call("console.info", "vpaidcontainer", 'adVolumne', String(_lastAdVolumne));
             } catch(e:Error) {
-                ExternalInterface.call("console.error", "vpaidcontainer", "unable get adVolumne", String(e));
+                ExternalInterface.call("console.error", "vpaidcontainer", "unable get adVolumne");
             }
 
             try {
@@ -157,7 +157,7 @@ package com.videojs.vpaid {
                 _vpaidAd.adVolume = _model.volume;
                 _vpaidAd.startAd();
             } catch(e:Error) {
-                ExternalInterface.call("console.error", "vpaidcontainer", "startAd error", String(e));
+                ExternalInterface.call("console.error", "vpaidcontainer", "startAd error");
                 _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_ERROR);
             }
         }
@@ -202,7 +202,7 @@ package com.videojs.vpaid {
         }
 
         private function onAdLog(evt:Object): void {
-            ExternalInterface.call("console.log", "vpaidcontainer", "AdLog", String(evt));
+            ExternalInterface.call("console.log", "vpaidcontainer", "AdLog");
         }
 
         private function onAdDurationChange(evt:Object): void {
@@ -221,31 +221,31 @@ package com.videojs.vpaid {
         }
 
         private function onAdVideoStart(evt:Object): void {
-            ExternalInterface.call("console.info", "vpaidcontainer", 'AdVideoStart', String(evt));
+            ExternalInterface.call("console.info", "vpaidcontainer", 'AdVideoStart');
             onAdDurationChange(evt);
             _model.broadcastEventExternally(ExternalEventName.ON_VAST_START);
         }
 
         private function onAdVideoFirstQuartile(evt:Object): void {
-            ExternalInterface.call("console.info", "vpaidcontainer", 'AdVideoFirstQuartile', String(evt));
+            ExternalInterface.call("console.info", "vpaidcontainer", 'AdVideoFirstQuartile');
             onAdDurationChange(evt);
             _model.broadcastEventExternally(ExternalEventName.ON_VAST_FIRST_QUARTILE);
         }
 
         private function onAdVideoMidpoint(evt:Object): void {
-            ExternalInterface.call("console.info", "vpaidcontainer", 'AdVideoMidpoint', String(evt));
+            ExternalInterface.call("console.info", "vpaidcontainer", 'AdVideoMidpoint');
             onAdDurationChange(evt);
             _model.broadcastEventExternally(ExternalEventName.ON_VAST_MIDPOINT);
         }
 
         private function onAdVideoThirdQuartile(evt:Object): void {
-            ExternalInterface.call("console.info", "vpaidcontainer", 'AdVideoThirdQuartile', String(evt));
+            ExternalInterface.call("console.info", "vpaidcontainer", 'AdVideoThirdQuartile');
             onAdDurationChange(evt);
             _model.broadcastEventExternally(ExternalEventName.ON_VAST_THIRD_QUARTILE);
         }
 
         private function onAdVideoComplete(evt:Object): void {
-            ExternalInterface.call("console.info", "vpaidcontainer", 'AdVideoComplete', String(evt));
+            ExternalInterface.call("console.info", "vpaidcontainer", 'AdVideoComplete');
             onAdDurationChange(evt);
             _model.broadcastEventExternally(ExternalEventName.ON_VAST_COMPLETE);
         }
