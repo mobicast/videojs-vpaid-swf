@@ -178,8 +178,12 @@ package com.videojs.vpaid {
             _isPlaying = false;
             _isPaused = false;
             _hasEnded = true;
-            _vpaidAd.stopAd();
-            _vpaidAd = null;
+
+            if (_vpaidAd != null) {
+                _vpaidAd.stopAd();
+                _vpaidAd = null;
+            }
+
             _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_ERROR);
 
             ExternalInterface.call("console.error", "vpaidcontainer", "VPAID::AdError", e);
