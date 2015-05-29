@@ -25,7 +25,7 @@ package com.videojs.vpaid {
         private var _hasEnded:Boolean = false;
         private var _loadStarted:Boolean = false;
         private var _ackTimer:Timer = new Timer(20000, 1);
-        private var _idleTimer:Timer = new Timer(3000, 5);
+        private var _idleTimer:Timer = new Timer(2000, 5);
         private var _lastAdVolumne:Number;
 
         public function AdContainer(model:VideoJSModel){

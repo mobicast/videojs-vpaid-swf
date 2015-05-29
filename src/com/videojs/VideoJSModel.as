@@ -317,9 +317,11 @@ package com.videojs{
         }
 
         public function get buffered():Number{
+            /*
             if(_provider){
                 return _provider.buffered;
             }
+            */
             return 0;
         }
 
