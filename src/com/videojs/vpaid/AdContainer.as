@@ -186,7 +186,7 @@ package com.videojs.vpaid {
 
             _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_ERROR);
 
-            ExternalInterface.call("console.error", "vpaidcontainer", "VPAID::AdError", e);
+            ExternalInterface.call("console.error", "vpaidcontainer", "VPAID::AdError", String(e));
         }
 
         private function onAdStopped(evt: Object): void {
@@ -470,7 +470,7 @@ package com.videojs.vpaid {
                 // ExternalInterface.call("console.info", "vpaidcontainer", "initAd", String(_model.bitrate), JSON.stringify(_model.adParameters));
                 ExternalInterface.call("console.info", "vpaidcontainer", "initAd", String(_model.bitrate));
                 // Use stage rect because current ad implementations do not currently provide width/height.
-                _vpaidAd.initAd(_model.stageRect.width, _model.stageRect.height, "normal", _model.bitrate, _model.adParameters, "");
+                _vpaidAd.initAd(320, 240, "normal", _model.bitrate, _model.adParameters, "");
             } catch(e:Error){
                 ExternalInterface.call("console.error", "vpaidcontainer", "initAd error");
                 _model.broadcastErrorEventExternally(ExternalErrorEventName.AD_CREATIVE_VPAID_ERROR);
